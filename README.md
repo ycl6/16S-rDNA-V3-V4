@@ -1,10 +1,13 @@
 # 16S rDNA V3-V4 amplicon sequencing analysis
 
-1. PCR primer trimming
-2. dada2
-3. phylogenetic tree construction (RAxML)
-4. phyloseq
-5. LEfSe
+1. PCR primer trimming (run_trimming.pl)
+2. dada2 part 1 (dada2-per-run-processing.R)
+3. dada2 part 2 (dada2-create-phyloseq-obj.R)
+4. phylogenetic tree construction (RAxML)
+* https://github.com/stamatak/standard-RAxML
+* https://github.com/amkozlov/raxml-ng
+5. phyloseq
+6. LEfSe
 
 # Download taxonomy DB
 
