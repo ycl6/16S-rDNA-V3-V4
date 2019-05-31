@@ -22,43 +22,31 @@ svid <- paste0("SV", sprintf(SVformat, seq(ncol(st.nochim))))
 # Assign taxonomy
 ref1 <- "/path-to-db/silva_nr_v132_train_set.dada2.fa.gz"
 ref2 <- "/path-to-db/silva_species_assignment_v132.dada2.fa.gz"
-ref3 <- "/path-to-db/ezbiocloud_species_assignment.dada2.fa.gz"
-ref4 <- "/path-to-db/16SMicrobial.fa.gz"
+ref3 <- "/path-to-db/16SMicrobial.fa.gz"
 
 taxtab <- assignTaxonomy(st.nochim, refFasta=ref1, minBoot=80, tryRC = TRUE, outputBootstraps=TRUE, verbose=TRUE, multithread=TRUE)
-
 spec_silva <- assignSpecies(getSequences(st.nochim), ref2, allowMultiple = FALSE, tryRC = TRUE, verbose = TRUE)
-
-spec_ebc <- assignSpecies(getSequences(st.nochim), ref3, allowMultiple = FALSE, tryRC = TRUE, verbose = TRUE)
-
-spec_ncbi <- assignSpecies(getSequences(st.nochim), ref4, allowMultiple = FALSE, tryRC = TRUE, verbose = TRUE)
+spec_ncbi <- assignSpecies(getSequences(st.nochim), ref3, allowMultiple = FALSE, tryRC = TRUE, verbose = TRUE)
 
 s_silva = data.frame(spec_silva)
 rownames(s_silva) = svid
-
-s_ebc = data.frame(spec_ebc)
-rownames(s_ebc) = svid
 
 s_ncbi = data.frame(spec_ncbi)
 rownames(s_ncbi) = svid
 s_ncbi[grep("\\[",s_ncbi$Genus),]$Species = NA
 s_ncbi[grep("\\[",s_ncbi$Genus),]$Genus = NA
 
-s_merged = cbind(s_ncbi, s_silva, s_ebc)
-colnames(s_merged) = c("nGenus","nSpecies","sGenus","sSpecies","eGenus","eSpecies")
-s_merged1 = s_merged[!is.na(s_merged$nSpecies),]
+s_merged = cbind(s_ncbi, s_silva)
+colnames(s_merged) = c("nGenus","nSpecies","sGenus","sSpecies")
+s_merged1 = s_merged[!is.na(s_merged$nSpecies),]	                        # NCBI assignment not empty
 colnames(s_merged1)[1:2] = c("Genus","Species")
-s_merged2 = s_merged[is.na(s_merged$nSpecies) & !is.na(s_merged$sSpecies),]
+s_merged2 = s_merged[is.na(s_merged$nSpecies) & !is.na(s_merged$sSpecies),]	# no NCBI assignment but Silva not empty
 colnames(s_merged2)[3:4] = c("Genus","Species")
-s_merged3 = s_merged[is.na(s_merged$nSpecies) & is.na(s_merged$sSpecies) & !is.na(s_merged$eSpecies),]
-colnames(s_merged3)[5:6] = c("Genus","Species")
-s_merged4 = s_merged[is.na(s_merged$nSpecies) & is.na(s_merged$sSpecies) & is.na(s_merged$eSpecies),]
-colnames(s_merged4)[3:4] = c("Genus","Species")
+s_merged3 = s_merged[is.na(s_merged$nSpecies) & is.na(s_merged$sSpecies),]	# no NCBI and Silva assignment
+colnames(s_merged3)[3:4] = c("Genus","Species")
 
-s_final = rbind(s_merged1[,c("Genus","Species")], s_merged2[,c("Genus","Species")], s_merged3[,c("Genus","Species")], s_merged4[,c("Genus","Species")])
+s_final = rbind(s_merged1[,c("Genus","Species")], s_merged2[,c("Genus","Species")], s_merged3[,c("Genus","Species")])
 s_final = s_final[order(row.names(s_final)),]
-s_final[grep("_s$",s_final$Species),]$Genus = NA
-s_final[grep("_s$",s_final$Species),]$Species = NA
 
 s_final = as.matrix(s_final)
 
@@ -85,7 +73,7 @@ colnames(taxtab$tax)[ncol(taxtab$tax)] <- "Species"
 taxtab$tax[!gen.match,"Species"] <- NA
 #print(paste("Of which", sum(!is.na(taxtab$tax[,"Species"])),"had genera consistent with the input table."))
 
-
+# Prepare df
 df <- data.frame(sequence=colnames(st.nochim), abundance=colSums(st.nochim))
 SVformat = paste("%0",nchar(as.character(nrow(df))),"d", sep="")
 df$id <- paste0("SV", sprintf(SVformat, seq(nrow(df))))
