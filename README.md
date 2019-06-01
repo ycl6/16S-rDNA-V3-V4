@@ -1,13 +1,20 @@
 # 16S rDNA V3-V4 amplicon sequencing analysis
 
 1. PCR primer trimming (run_trimming.pl)
-2. dada2 part 1 (dada2-per-run-processing.R)
-3. dada2 part 2 (dada2-create-phyloseq-obj.R)
-4. phylogenetic tree construction (RAxML)
+* cutadapt: https://cutadapt.readthedocs.io/en/stable/
+
+2. DADA2 part 1 (dada2-per-run-processing.R) and part 2 (dada2-create-phyloseq-obj.R)
+* DADA2 GitHub: https://benjjneb.github.io/dada2/
+
+3. phylogenetic tree construction (RAxML)
 * https://github.com/stamatak/standard-RAxML
 * https://github.com/amkozlov/raxml-ng
-5. phyloseq
-6. LEfSe
+
+4. phyloseq
+* phyloseq  GitHub: https://joey711.github.io/phyloseq/
+
+5. LEfSe
+* LEfSe Tutorial: https://bitbucket.org/biobakery/biobakery/wiki/lefse
 
 ## Download Silva and NCBI taxonomy DB
 
