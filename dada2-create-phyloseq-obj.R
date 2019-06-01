@@ -131,3 +131,5 @@ tax[is.na(tax$Genus) & !is.na(tax$Family),]$Genus = paste(tax[is.na(tax$Genus) &
 # Combine data into a phyloseq object
 ps <- phyloseq(tax_table(as.matrix(tax)), sample_data(samdf), otu_table(new_seqtab, taxa_are_rows = FALSE), phy_tree(raxml_tree))
 
+# Save current workspace
+# save.image(file="image2.RData")
