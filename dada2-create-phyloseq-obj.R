@@ -103,11 +103,11 @@ write.phyDat(phang.align, file="alignment.aln", format="phylip")
 raxml_tree <- read_tree("GTRCAT.raxml.mlTrees")
 
 # Load sample info (sample.meta); Example content:
-#  Sample_ID   File_ID    Batch
-#    Sample1  oldname1     run1
-#    Sample2  oldname2     run1
-#    Sample3  oldname3     run2
-#    Sample4  oldname4     run2
+#  Sample_ID   File_ID    Batch     Group
+#    Sample1  oldname1     run1         A
+#    Sample2  oldname2     run1         B
+#    Sample3  oldname3     run2         A
+#    Sample4  oldname4     run2         B
 
 samdf <- data.frame(fread("sample.meta", colClasses = "character"))
 
@@ -116,6 +116,7 @@ samdf$Sample_ID = as.factor(samdf$Sample_ID)
 rownames(st.nochim) = as.character(samdf[match(rownames(st.nochim), samdf$File_ID),]$Sample_ID) # Update id if necessary
 samdf$Sample_ID = factor(samdf$Sample_ID, levels=c(sort(levels(samdf$Sample_ID), decreasing=F)))
 samdf$Batch = as.factor(samdf$Batch)
+samdf$Group = as.factor(samdf$Group)
 
 new_seqtab = st.nochim
 new_taxtab = taxtab
