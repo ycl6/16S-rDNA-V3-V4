@@ -4,6 +4,8 @@ library("data.table")
 library("phyloseq")
 library("ggplot2")
 library("dplyr")  #"%>%"
+library("ggbeeswarm")
+library("ggrepel")
 library("vegan")
 options(width=190)
 
