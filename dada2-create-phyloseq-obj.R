@@ -20,8 +20,8 @@ SVformat = paste("%0",nchar(as.character(ncol(st.nochim))),"d", sep="")
 svid <- paste0("SV", sprintf(SVformat, seq(ncol(st.nochim))))
 
 # Assign taxonomy
-ref1 <- "/path-to-db/silva_nr_v132_train_set.dada2.fa.gz"
-ref2 <- "/path-to-db/silva_species_assignment_v132.dada2.fa.gz"
+ref1 <- "/path-to-db/silva_nr_v132_train_set.fa.gz"
+ref2 <- "/path-to-db/silva_species_assignment_v132.fa.gz"
 ref3 <- "/path-to-db/16SMicrobial.fa.gz"
 
 taxtab <- assignTaxonomy(st.nochim, refFasta=ref1, minBoot=80, tryRC = TRUE, outputBootstraps=TRUE, verbose=TRUE, multithread=TRUE)
