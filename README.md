@@ -9,7 +9,7 @@
 5. phyloseq
 6. LEfSe
 
-# Download taxonomy DB
+## Download Silva and NCBI taxonomy DB
 
 1. Silva taxonomic training data formatted for DADA2 (Silva version 132)
 https://zenodo.org/record/1172783#.XPFLeUdS8-U
@@ -24,3 +24,6 @@ tar zxf 16SMicrobial.tar.gz
 blastdbcmd -db 16SMicrobial -entry all -out 16SMicrobial.fa
 gzip 16SMicrobial.fa
 ```
+
+## Download taxa_summary.R
+http://evomics.org/phyloseq/taxa_summary-r/
