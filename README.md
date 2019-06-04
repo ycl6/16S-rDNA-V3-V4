@@ -13,8 +13,9 @@
 4. phyloseq (***phyloseq-analysis.R***)
 * phyloseq  GitHub: https://joey711.github.io/phyloseq/
 
-5. LEfSe
+5. LEfSe and GraPhlAn
 * LEfSe Tutorial: https://bitbucket.org/biobakery/biobakery/wiki/lefse
+* GraPhlAn Tutorial: https://bitbucket.org/nsegata/graphlan/wiki/Home
 
 ## Download Silva and NCBI taxonomy DB
 
