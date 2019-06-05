@@ -1,5 +1,22 @@
 # 16S rDNA V3-V4 amplicon sequencing analysis
 
+## Install required R packages
+
+```
+install.packages(c("ggplot2","data.table","dplyr","phangorn","ggbeeswarm","ggrepel","vegan"))
+```
+
+```
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("dada2")
+BiocManager::install("phyloseq")
+BiocManager::install("DECIPHER")
+```
+
+## Workflow
+
 1. PCR primer trimming (***run_trimming.pl***)
 * cutadapt: https://cutadapt.readthedocs.io/en/stable/
 
