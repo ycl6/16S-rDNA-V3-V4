@@ -1,0 +1,16 @@
+Phylum	Class	HEX	R	G	B	Name
+Actinobacteria	Actinobacteria	#FFFF00	255	255	0	Yellow 1
+Actinobacteria	Acidimicrobiia	#E5E500	229	229	0	
+Actinobacteria	Rubrobacteria	#CCCC00	204	204	0	
+Actinobacteria	Thermoleophilia	#FFD700	255	215	0	Gold
+Bacteroidetes	Bacteroidia	#FD7D00	253	125	0	
+Bacteroidetes	Rhodothermia	#FDB166	253	177	102	
+Cyanobacteria	Oxyphotobacteria	#92d050	146	208	80	
+Deinococcus-Thermus	Deinococci	#D3D3D3	211	211	211	Light Gray
+Firmicutes	Bacilli	#6B8E23	107	142	35	
+Firmicutes	Clostridia	#0001FB	0	1	251	
+Fusobacteria	Fusobacteriia	#FF00FF	255	0	255	Magenta
+Proteobacteria	Alphaproteobacteria	#E59ADB	229	154	219	
+Proteobacteria	Deltaproteobacteria	#FF69B4	255	105	180	Hot Pink
+Proteobacteria	Gammaproteobacteria	#C04BA0	192	75	160	
+Planctomycetes	Phycisphaerae	#00FF00	0	255	0	Green 1

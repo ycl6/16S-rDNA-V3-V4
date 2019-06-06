@@ -1,0 +1,38 @@
+Phylum	Class	Order	Family	HEX	R	G	B	Name
+Actinobacteria	Acidimicrobiia	Microtrichales	Ilumatobacteraceae	#E5E500	229	229	0	
+Bacteroidetes	Cytophagia	Cytophagales	Cyclobacteriaceae	#FFDAB9	255	218	185	Peach Puff
+Bacteroidetes	Flavobacteriia	Flavobacteriales	Cryomorphaceae	#EC8A30	236	138	48	
+Bacteroidetes	Flavobacteriia	Flavobacteriales	Flavobacteriaceae	#FD7D00	253	125	0	
+Bacteroidetes	Flavobacteriia	Flavobacteriales	Crocinitomicaceae	#F9988D	249	152	141	
+Bacteroidetes	Sphingobacteriia	Sphingobacteriales	NS11-12_marine_group	#C48B1E	196	139	30	
+Bacteroidetes	Sphingobacteriia	Sphingobacteriales	Sphingomonadaceae	#FFD700	255	215	0	Gold
+Bacteroidetes	Rhodothermia	Balneolales	Balneolaceae	#977316	151	115	22	
+Planctomycetes	Phycisphaerae	Phycisphaerales	Phycisphaeraceae	#00FF00	0	255	0	Green 1
+Proteobacteria	Alphaproteobacteria	Caulobacterales	Caulobacteraceae	#E59ADB	255	192	203	Pink
+Proteobacteria	Alphaproteobacteria	Caulobacterales	Hyphomonadaceae	#AD7097	173	112	151	
+Proteobacteria	Alphaproteobacteria	Rhizobiales	Devosiaceae	#E131FA	225	49	250	
+Proteobacteria	Alphaproteobacteria	Rhizobiales	Stappiaceae	#F0A8F2	240	168	242	
+Proteobacteria	Alphaproteobacteria	Rhizobiales	Rhizobiaceae	#FFE4E1	255	228	255	Misty Rose
+Proteobacteria	Alphaproteobacteria	Rhodobacterales	Rhodobacteraceae	#CC00CC	204	0	204	
+Proteobacteria	Alphaproteobacteria	Parvibaculales	Parvibaculaceae	#FF00FF	255	0	255	Magenta
+Proteobacteria	Alphaproteobacteria	Rhodospirillales	Terasakiellaceae	#FF99FF	255	153	255	
+Proteobacteria	Alphaproteobacteria	Rhodospirillales	Thalassospiraceae	#EE82EE	238	130	238	Hot Pink
+Proteobacteria	Gammaproteobacteria	Alteromonadales	Alteromonadaceae	#171580	23	21	128	
+Proteobacteria	Gammaproteobacteria	Alteromonadales	Marinobacteraceae	#86FCFC	134	252	252	
+Proteobacteria	Gammaproteobacteria	Oceanospirillales	Halomonadaceae	#FF0000	255	0	0	Red
+Proteobacteria	Gammaproteobacteria	Oceanospirillales	Saccharospirillaceae	#CF220C	207	34	12	
+Proteobacteria	Gammaproteobacteria	Nitrosococcales	Methylophagaceae	#8A2BE2	138	43	226	Blue Violet
+Proteobacteria	Gammaproteobacteria	Pseudomonadales	Pseudomonadaceae	#D62D20	214	45	32	
+Firmicutes	Bacilli		Aerococcaceae	#66CCCC	102	204	204	
+Firmicutes	Bacilli		Bacillaceae	#6B8E23	107	142	35	
+Firmicutes	Bacilli		Carnobacteriaceae	#D3FFCE	211	255	206	
+Firmicutes	Bacilli		Enterococcaceae	#32CD32	50	205	50	
+Firmicutes	Bacilli		Bacilli_Family_XI	#00CDCD	0	205	205	
+Firmicutes	Bacilli		Bacilli_Family_XII	#00CDCD	0	205	205	
+Firmicutes	Bacilli		Lactobacillaceae	#40E0D0	64	244	208	
+Firmicutes	Bacilli		Leuconostocaceae	#CCFF00	204	255	0	
+Firmicutes	Bacilli		Planococcaceae	#CCFF00	204	255	0	
+Firmicutes	Bacilli		Listeriaceae	#006400	0	100	0	
+Firmicutes	Bacilli		Sporolactobacillaceae	#006400	0	100	0	
+Firmicutes	Bacilli		Staphylococcaceae	#00EE00	0	238	0	
+Firmicutes	Bacilli		Streptococcaceae	#CCCCFF	204	204	255	
