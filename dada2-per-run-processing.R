@@ -29,7 +29,7 @@ filtRs <- file.path(filt, basename(fnRs))
 # Review "plotQualityProfile.pdf" to select the best paramters for truncLen
 out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, 
                      # Need to keep paramters consistent between runs of the same study
-                     truncLen=c(240,230), minLen=200, maxN=0, truncQ=2, maxEE=c(2,5),
+                     truncLen=c(260,200), minLen=200, maxN=0, truncQ=2, maxEE=c(2,5),
                      rm.phix=TRUE, compress=TRUE, verbose=TRUE, multithread=TRUE)
 #head(out)
 
