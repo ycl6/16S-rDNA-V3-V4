@@ -13,7 +13,7 @@ options(width=190)
 
 ps0 <- subset_taxa(ps, Kingdom == "Bacteria" & !is.na(Phylum) & !is.na(Class) & Phylum!= "Cyanobacteria" & Order != "Chloroplast" & Family != "Mitochondria")
 
-source("taxa_summary.R", local = TRUE)
+source("/path-to-script/taxa_summary.R", local = TRUE)
 tdt = data.table(tax_table(ps0), TotalCounts = taxa_sums(ps0), SV = taxa_names(ps0))
 mdt = fast_melt(ps0)
 prevdt = mdt[, list(Prevalence = sum(count > 0), TotalCounts = sum(count), MaxCounts = max(count)), by = TaxaID]
@@ -78,10 +78,10 @@ write.table(reshape2::dcast(ps1 %>% tax_glom(taxrank = "Genus") %>% transform_sa
 	file="expr.relative_abundance.abgen.txt", sep = "\t", quote = F, row.names = F, col.names = T)
 
 # Define colors for the common taxa in the taxonomic hierarchy
-hexcolor.phylum = data.frame(fread("hexcolor.phylum"))
-hexcolor.class = data.frame(fread("hexcolor.class"))
-hexcolor.family = data.frame(fread("hexcolor.family"))
-hexcolor.genus = data.frame(fread("hexcolor.genus"))
+hexcolor.phylum = data.frame(fread("/path-to-script/hexcolor.phylum"))
+hexcolor.class = data.frame(fread("/path-to-script/hexcolor.class"))
+hexcolor.family = data.frame(fread("/path-to-script/hexcolor.family"))
+hexcolor.genus = data.frame(fread("/path-to-script/hexcolor.genus"))
 
 hexcolor.phylum = setNames(as.character(hexcolor.phylum$HEX), hexcolor.phylum$Phylum)
 hexcolor.class = setNames(as.character(hexcolor.class$HEX), hexcolor.class$Class)
