@@ -24,8 +24,8 @@ BiocManager::install("DECIPHER")
 * DADA2 GitHub: https://benjjneb.github.io/dada2/
 
 3. phylogenetic tree construction (RAxML)
-* https://github.com/stamatak/standard-RAxML
-* https://github.com/amkozlov/raxml-ng
+* https://github.com/stamatak/standard-RAxML (make -f Makefile.SSE3.PTHREADS.gcc)
+* https://github.com/amkozlov/raxml-ng (下載已編譯版本 raxml-ng_vx.x.x_linux_x86_64.zip)
 
 4. phyloseq (***phyloseq-analysis.R***)
 * phyloseq  GitHub: https://joey711.github.io/phyloseq/
