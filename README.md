@@ -45,7 +45,7 @@ https://zenodo.org/record/1172783#.XPFLeUdS8-U
 
 Install BLAST 
 ```
-sudo apt-get install ncbi-blast+. 
+sudo apt-get install ncbi-blast+
 ```
 
 Download NCBI's 16SMicrobial BLAST DB
