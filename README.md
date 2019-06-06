@@ -42,10 +42,20 @@ https://zenodo.org/record/1172783#.XPFLeUdS8-U
 * silva_species_assignment_v132.fa.gz
 
 2. Create from NCBI 16SMicrobial blast DB
+
+Install BLAST 
+```
+sudo apt-get install ncbi-blast+. 
+```
+
+Download NCBI's 16SMicrobial BLAST DB
 ```
 wget ftp://ftp.ncbi.nih.gov/blast/db/16SMicrobial.tar.gz
 tar zxf 16SMicrobial.tar.gz
+```
 
+Convert 16SMicrobial BLAST DB into FASTA format
+```
 blastdbcmd -db 16SMicrobial -entry all -out 16SMicrobial.fa
 gzip 16SMicrobial.fa
 ```
