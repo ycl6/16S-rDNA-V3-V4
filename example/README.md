@@ -10,3 +10,10 @@ We will use this dataset as an example to perform 16S rDNA V3-V4 amplicon sequen
 **341F**: CTATGGTAATTCGTCCTACGGRAGGCAGCAG
 
 **806R**: AGTCAGTCAGCCGGACTACCRGGGTATCTAAT
+
+## dada2 filterAndTrim() parameter for this study
+```
+out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs,
+                     truncLen=c(240,230), minLen=200, maxN=0, truncQ=2, maxEE=c(2,5),
+                     rm.phix=TRUE, compress=TRUE, verbose=TRUE, multithread=TRUE)
+```
