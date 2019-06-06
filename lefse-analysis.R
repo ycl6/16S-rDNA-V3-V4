@@ -38,7 +38,7 @@ write.table(lefse1, file="lefse/expr1.lefse_table.txt", sep = "\t", quote = F, r
 # perl /path-to-script/lefse.pl lefse/expr1.lefse_table.res lefse/expr1.graphlan_outtree.txt lefse/expr1.out
 #######################################################
 
-# plot_res in R
+# plot res in R
 library(grid)
 Sys.setlocale("LC_COLLATE","C")
 
