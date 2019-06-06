@@ -31,8 +31,8 @@ BiocManager::install("DECIPHER")
 * phyloseq  GitHub: https://joey711.github.io/phyloseq/
 
 5. LEfSe and GraPhlAn (***lefse-analysis.R***)
-* LEfSe Tutorial: https://bitbucket.org/biobakery/biobakery/wiki/lefse
-* GraPhlAn Tutorial: https://bitbucket.org/nsegata/graphlan/wiki/Home
+* LEfSe Download: https://bitbucket.org/nsegata/lefse/downloads/ (unzip nsegata-lefse-82605a2ae7b7.zip)
+* GraPhlAn Download: https://bitbucket.org/nsegata/graphlan/downloads/ (unzip graphlan_commit_6ca8735.zip)
 
 ## Download Silva and NCBI taxonomy DB
 
