@@ -35,4 +35,5 @@ write.table(lefse1, file="lefse/expr1.lefse_table.txt", sep = "\t", quote = F, r
 # /path-to-script/graphlan_commit_6ca8735/export2graphlan/export2graphlan.py -i lefse/expr1.lefse_table.txt -o lefse/expr1.lefse_table.res -t lefse/expr1.graphlan_tree.txt -a lefse/expr1.graphlan_annot.txt --external_annotations 2,3,4,5,6 --fname_row 0 --skip_rows 1 --biomarkers2colors lefse/lefse.expr.colors
 # /path-to-script/graphlan_commit_6ca8735/graphlan_annotate.py --annot lefse/expr1.graphlan_annot.txt lefse/expr1.graphlan_tree.txt lefse/expr1.graphlan_outtree.txt
 # /path-to-script/graphlan_commit_6ca8735/graphlan.py --dpi 150 lefse/expr1.graphlan_outtree.txt lefse/expr1.graphlan.png --external_legends --size 8 --pad 0.2
+# perl /path-to-script/lefse.pl lefse/expr1.lefse_table.res lefse/expr1.graphlan_outtree.txt lefse/expr1.out
 #######################################################
