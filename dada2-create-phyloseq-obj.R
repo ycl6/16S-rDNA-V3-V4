@@ -100,7 +100,9 @@ write.phyDat(phang.align, file="alignment.aln", format="phylip")
 #######################################################
 
 # Import tree
-raxml_tree <- read_tree("GTRCAT.raxml.mlTrees")
+# raxml-ng (v0.7.0): GTRCAT.raxml.mlTrees
+# raxml-ng (v0.9.0): GTRCAT.raxml.bestTree
+raxml_tree <- read_tree("GTRCAT.raxml.bestTree")
 
 # Load sample info (sample.meta); Example content:
 #  Sample_ID   File_ID    Batch     Group
