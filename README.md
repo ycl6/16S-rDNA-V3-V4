@@ -3,7 +3,7 @@
 ## Install required R packages
 
 ```
-install.packages(c("ggplot2","data.table","dplyr","phangorn","ggbeeswarm","ggrepel","vegan"))
+install.packages(c("ggplot2","data.table","dplyr","phangorn","ggbeeswarm","ggrepel","vegan","GUniFrac"))
 ```
 
 ```
