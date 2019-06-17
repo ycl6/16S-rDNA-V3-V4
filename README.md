@@ -70,3 +70,8 @@ gzip 16SMicrobial.fa
 
 ## Download taxa_summary.R
 http://evomics.org/phyloseq/taxa_summary-r/
+
+To uncompress file:
+```
+gunzip taxa_summary.R.gz
+```
