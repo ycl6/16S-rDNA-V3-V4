@@ -28,12 +28,22 @@ BiocManager::install("DECIPHER")
 **RAxML:**
 https://github.com/stamatak/standard-RAxML
 
+Download the source file `standard-RAxML-x.x.x.tar.gz`
+
+Use `tar zxvf standard-RAxML-x.x.x.tar.gz` to extract file
+
 Use `make -f Makefile.SSE3.PTHREADS.gcc` to compile specific version
 
 **raxml-ng:**
 https://github.com/amkozlov/raxml-ng
 
-Download the pre-compiled binary `raxml-ng_vx.x.x_linux_x86_64.zip`
+Download the pre-compiled binary `raxml-ng_vx.x.x_linux_x86_64.zip` (change x.x.x to downloaded version)
+
+To extract files to a directory:
+```
+mkdir raxml-ng_vx.x.x
+unzip raxml-ng_vx.x.x_linux_x86_64.zip -d raxml-ng_vx.x.x
+```
 
 4. phyloseq (***phyloseq-analysis.R***)
 * phyloseq  GitHub: https://joey711.github.io/phyloseq/
@@ -71,7 +81,4 @@ gzip 16SMicrobial.fa
 ## Download taxa_summary.R
 http://evomics.org/phyloseq/taxa_summary-r/
 
-To uncompress file:
-```
-gunzip taxa_summary.R.gz
-```
+Use `gunzip taxa_summary.R.gz` to extract file
