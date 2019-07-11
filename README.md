@@ -3,7 +3,7 @@
 ## Install required R packages
 
 ```
-install.packages(c("ggplot2","data.table","dplyr","phangorn","ggbeeswarm","ggrepel","vegan","GUniFrac"))
+install.packages(c("ggplot2","data.table","plyr","dplyr","phangorn","ggbeeswarm","ggrepel","vegan","GUniFrac"))
 ```
 
 For R version >= 3.5 (Bioconductor version >= 3.8):
@@ -11,13 +11,13 @@ For R version >= 3.5 (Bioconductor version >= 3.8):
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
-BiocManager::install(c("dada2", "phyloseq", "DECIPHER"))
+BiocManager::install(c("dada2", "phyloseq", "DECIPHER", "DESeq2"))
 ```
 
 For older versions of R:
 ```
 source("https://bioconductor.org/biocLite.R")
-biocLite(c("dada2", "phyloseq", "DECIPHER"))
+biocLite(c("dada2", "phyloseq", "DECIPHER", "DESeq2"))
 ```
 
 ## Workflow
