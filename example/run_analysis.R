@@ -176,8 +176,8 @@ write.phyDat(phang.align, file="alignment.aln", format="phylip")
 
 #######################################################
 # Run below 2 commands outside R in Linux environment
-#raxmlHPC-PTHREADS-SSE3 -T 2 -f E -p 1234 -x 5678 -m GTRCAT -N 1 -s alignment.aln -n raxml_tree_GTRCAT
-#raxml-ng --evaluate --force --seed 1234 --log progress --threads 2 --msa alignment.fasta --model GTR+G --tree RAxML_fastTree.raxml_tree_GTRCAT --brlen scaled --prefix GTRCAT
+#/path-to-script/raxmlHPC-PTHREADS-SSE3 -T 2 -f E -p 1234 -x 5678 -m GTRCAT -N 1 -s alignment.aln -n raxml_tree_GTRCAT
+#/path-to-script/raxml-ng --evaluate --force --seed 1234 --log progress --threads 2 --msa alignment.fasta --model GTR+G --tree RAxML_fastTree.raxml_tree_GTRCAT --brlen scaled --prefix GTRCAT
 #######################################################
 
 # Import tree
@@ -571,6 +571,64 @@ dev.off()
 
 png("lefse/expr1.lefse_table.png", width = 8, height = 8, units = "in", res = 300)
 grid.draw(gt)
+dev.off()
+
+##### Signifiant genera based on LEfSe results #####
+abgen = ps1 %>% tax_glom(taxrank = "Genus") %>% transform_sample_counts(function(x) {x/sum(x)} ) %>% psmelt()
+abgen = abgen[abgen$Genus %in% gsub("\\(.+","",as.character(res1[res1$rank == "G",]$taxon)),]
+
+#> length(unique(as.character(abgen$Genus)))
+#[1] 24
+
+library(plyr)
+
+anno1 = ddply(abgen, .(Genus), summarise, y = max(Abundance)*100*1.1)
+anno1 = merge(anno1, cbind(Genus = gsub("\\(.+","",as.character(res1[res1$rank == "G",]$taxon)), res1[res1$rank == "G",6:7]), by = "Genus")
+anno1$label = paste0("P=",formatC(anno1$pvalue, format = "f"), " (LDA=",formatC(anno1$lda, format = "f"),")")
+
+png("expr1.lefse.boxplot.png", width=12, height=10, units = "in", res = 300)
+ggplot(abgen, aes(Experimental.factor, Abundance*100, color = Experimental.factor)) + geom_boxplot(outlier.shape = NA, size = 0.8, width = 0.8) +
+geom_quasirandom(size = 1, color = "black") + theme_bw() + facet_wrap(~ Genus, scales = "free_y", nrow = 4) +
+theme(legend.position="none", axis.title.x = element_blank(), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10),
+strip.text.x = element_text(face = "bold", size = 8)) + labs(y = "Relative abundance (%)") +
+geom_text(data=anno1, aes(x = 1.5, y = y, label = label), size = 3, color = "black")
+dev.off()
+
+##### Signifiant species #####
+abspc = ps1 %>% tax_glom(taxrank = "Species") %>% transform_sample_counts(function(x) {x/sum(x)} ) %>% psmelt()
+abspc$Species = paste(abspc$Genus, abspc$Species)
+abspc$Species = gsub("_[a-zA-Z0-9_]*","",abspc$Species)
+
+#> length(unique(as.character(abspc$Species)))
+#[1] 59
+
+result <- data.frame()
+for (Species in unique(as.character(abspc$Species))) {
+        test.result = kruskal.test(Abundance ~ Experimental.factor, abspc[abspc$Species == Species,])
+        result[Species, 'p'] <- test.result$p.value
+}
+result$p.adjusted <- p.adjust(result$p, method="fdr")
+
+#> table(result$p < 0.05)
+#FALSE  TRUE
+#   46    13
+
+#> table(result$p.adjusted < 0.1)
+#FALSE  TRUE
+#   57     2
+
+abspc = abspc[abspc$Species %in% rownames(result[result$p < 0.05,]),]
+
+anno2 = ddply(abspc, .(Species), summarise, y = max(Abundance)*100*1.1)
+anno2 = merge(anno2, result[result$p < 0.05,], by.x = "Species", by.y = "row.names")
+anno2$label = paste0("P=",formatC(anno2$p, format = "f"))
+
+png("species_targets.boxplot.png", width=12, height=8, units = "in", res = 300)
+ggplot(abspc, aes(Experimental.factor, Abundance*100, color = Experimental.factor)) + geom_boxplot(outlier.shape = NA, size = 0.8, width = 0.8) +
+geom_quasirandom(size = 1, color = "black") + theme_bw() + facet_wrap(~ Species, scales = "free_y", nrow = 3) +
+theme(legend.position="none", axis.title.x = element_blank(), axis.title.y = element_text(size = 10), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10),
+strip.text.x = element_text(face = "bold", size = 8)) + labs(title = "Candidate bacterial species", y = "Relative abundance (% species-level assigned)") +
+geom_text(data=anno2, aes(x = 1.5, y = y, label = label), size = 3, color = "black")
 dev.off()
 
 # Save current workspace
