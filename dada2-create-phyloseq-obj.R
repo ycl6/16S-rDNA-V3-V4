@@ -95,8 +95,8 @@ write.phyDat(phang.align, file="alignment.aln", format="phylip")
 
 #######################################################
 # Run below 2 commands outside R in Linux environment
-#raxmlHPC-PTHREADS-SSE3 -T 2 -f E -p 1234 -x 5678 -m GTRCAT -N 1 -s alignment.aln -n raxml_tree_GTRCAT
-#raxml-ng --evaluate --force --seed 1234 --log progress --threads 2 --msa alignment.fasta --model GTR+G --tree RAxML_fastTree.raxml_tree_GTRCAT --brlen scaled --prefix GTRCAT
+#/path-to-script/raxmlHPC-PTHREADS-SSE3 -T 2 -f E -p 1234 -x 5678 -m GTRCAT -N 1 -s alignment.aln -n raxml_tree_GTRCAT
+#/path-to-script/raxml-ng --evaluate --force --seed 1234 --log progress --threads 2 --msa alignment.fasta --model GTR+G --tree RAxML_fastTree.raxml_tree_GTRCAT --brlen scaled --prefix GTRCAT
 #######################################################
 
 # Import tree
