@@ -14,6 +14,8 @@ s02 <- readRDS("seqtab2.rds")
 
 # Merge sequence table and remove chimeras
 st.all <- mergeSequenceTables(s01, s02)
+# To sum values of same sample from multiple sequence table (i.e. when a sample was re-sequenced due to low depth)
+# st.all <- mergeSequenceTables(s01, s02, repeats="sum")
 st.nochim <- removeBimeraDenovo(st.all, verbose=TRUE, multithread=TRUE)
 
 SVformat = paste("%0",nchar(as.character(ncol(st.nochim))),"d", sep="")
