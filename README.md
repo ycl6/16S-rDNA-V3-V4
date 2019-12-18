@@ -58,9 +58,12 @@ unzip raxml-ng_vx.x.x_linux_x86_64.zip -d raxml-ng_vx.x.x
 4. phyloseq (***phyloseq-analysis.R***)
 * phyloseq  GitHub: https://joey711.github.io/phyloseq/
 
-5. LEfSe and GraPhlAn (***lefse-analysis.R***)
+5. [Requires Python 2.7] LEfSe and GraPhlAn (***lefse-analysis.R***) 
 * LEfSe Download: https://bitbucket.org/nsegata/lefse/downloads/ (unzip nsegata-lefse-82605a2ae7b7.zip)
+  * Additional packages required: rpy2, numpy, matplotlib, argparse
+  * Additional R libraries required: survival, mvtnorm, modeltools, coin, MASS
 * GraPhlAn Download: https://bitbucket.org/nsegata/graphlan/downloads/ (unzip graphlan_commit_6ca8735.zip)
+  * Additional packages required: biopython, matplotlib
 
 ## Download Silva and NCBI taxonomy DB
 
