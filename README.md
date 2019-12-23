@@ -63,6 +63,8 @@ unzip raxml-ng_vx.x.x_linux_x86_64.zip -d raxml-ng_vx.x.x
 * LEfSe Download: https://bitbucket.org/nsegata/lefse/downloads/ (unzip nsegata-lefse-9adc3a62460e.zip)
   * Additional packages required: rpy2, numpy, matplotlib, argparse
   * Additional R libraries required: survival, mvtnorm, modeltools, coin, MASS
+* export2graphlan: Install using `conda install export2graphlan`
+  * Additional packages required: pandas, scipy
 * GraPhlAn Download: https://bitbucket.org/nsegata/graphlan/downloads/ (unzip nsegata-graphlan-66ec7cfce81e.zip)
   * Additional packages required: biopython, matplotlib
 
