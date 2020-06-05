@@ -64,8 +64,10 @@ unzip raxml-ng_vx.x.x_linux_x86_64.zip -d raxml-ng_vx.x.x
   * Additional packages required: rpy2, numpy, matplotlib, argparse
   * Additional R libraries required: survival, mvtnorm, modeltools, coin, MASS
 * export2graphlan: Install using `conda install -c bioconda export2graphlan`
+  * https://github.com/segatalab/export2graphlan
   * Additional packages required: pandas, scipy
-* GraPhlAn Download: https://bitbucket.org/nsegata/graphlan/downloads/ (unzip nsegata-graphlan-66ec7cfce81e.zip)
+* GraPhlAn Download: Install using `conda install -c bioconda graphlan`
+  * https://bitbucket.org/nsegata/graphlan/wiki/Home
   * Additional packages required: biopython, matplotlib
 
 ## Download Silva and NCBI taxonomy DB
