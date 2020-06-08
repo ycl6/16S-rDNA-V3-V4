@@ -84,15 +84,15 @@ Install BLAST
 sudo apt-get install ncbi-blast+
 ```
 
-Download NCBI's 16SMicrobial BLAST DB
+Download NCBI's 16S rRNA BLAST DB
 ```
-wget ftp://ftp.ncbi.nih.gov/blast/db/16SMicrobial.tar.gz
-tar zxf 16SMicrobial.tar.gz
+wget ftp://ftp.ncbi.nih.gov/blast/db/16S_ribosomal_RNA.tar.gz
+tar zxf 16S_ribosomal_RNA.tar.gz
 ```
 
 Convert 16SMicrobial BLAST DB into FASTA format
 ```
-blastdbcmd -db 16SMicrobial -entry all -out 16SMicrobial.fa
+blastdbcmd -db 16S_ribosomal_RNA -entry all -out 16SMicrobial.fa
 gzip 16SMicrobial.fa
 ```
 
