@@ -81,6 +81,10 @@ https://zenodo.org/record/1172783#.XPFLeUdS8-U
 
 Install BLAST 
 ```
+conda install -c bioconda blast
+```
+or
+```
 sudo apt-get install ncbi-blast+
 ```
 
