@@ -66,10 +66,18 @@ my $j = 0;
 open(TXT, $txt) or die "Cannot open $txt";
 while(<TXT>) {
         chomp;
-        # <property applies_to="clade" datatype="xsd:string" id_ref="annotation" ref="A:1">A:Coriobacteriia</property>
-        if($_ =~ /id_ref="annotation".+>(\w+):(.+)<\/property>/) {
-                my $order = $1;
-                my $name = $2;
+	my $order = "";
+	my $name = "";
+	# <property applies_to="clade" datatype="xsd:string" id_ref="annotation" ref="A:1">A:Coriobacteriia</property>
+	# <property applies_to="clade" datatype="xsd:string" id_ref="annotation" ref="A:1">AV: Ruminococcaceae</property>
+	if($_ =~ /<property applies_to="clade" datatype="xsd:string" id_ref="annotation" ref="A:1">/) {
+		if($_ =~ /id_ref="annotation".+>(\w+): (.+)<\/property>/) {
+			$order = $1;
+			$name = $2;
+		} elsif ($_ =~ /id_ref="annotation".+>(\w+):(.+)<\/property>/) {
+			$order = $1;
+			$name = $2;
+		}
                 $name =~ s/ /_/g;
 		if(!defined($txtData{$name})) {
 			$j = 0;
