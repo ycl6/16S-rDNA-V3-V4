@@ -2,33 +2,33 @@
 
 library("dada2")
 library("data.table")
-library("DECIPHER")
-library("phangorn")
 library("phyloseq")
 library("ggplot2")
 options(width=190)
 
 # Load sequence table from multiple runs
-s01 <- readRDS("seqtab1.rds")
-s02 <- readRDS("seqtab2.rds")
+s01 = readRDS("seqtab1.rds")
+s02 = readRDS("seqtab2.rds")
 
 # Merge sequence table and remove chimeras
-st.all <- mergeSequenceTables(s01, s02)
+st.all = mergeSequenceTables(s01, s02)
+
 # To sum values of same sample from multiple sequence table (i.e. when a sample was re-sequenced due to low depth)
-# st.all <- mergeSequenceTables(s01, s02, repeats="sum")
-st.nochim <- removeBimeraDenovo(st.all, verbose=TRUE, multithread=TRUE)
+# st.all = mergeSequenceTables(s01, s02, repeats = "sum")
+st.nochim = removeBimeraDenovo(st.all, verbose = TRUE, multithread = TRUE)
 
 SVformat = paste("%0",nchar(as.character(ncol(st.nochim))),"d", sep="")
-svid <- paste0("SV", sprintf(SVformat, seq(ncol(st.nochim))))
+svid = paste0("SV", sprintf(SVformat, seq(ncol(st.nochim))))
 
 # Assign taxonomy
-ref1 <- "/path-to-db/silva_nr_v132_train_set.fa.gz"
-ref2 <- "/path-to-db/silva_species_assignment_v132.fa.gz"
-ref3 <- "/path-to-db/16SMicrobial.fa.gz"
+dbpath = "/path-to-db/"
+ref1 = paste0(dbpath, "silva_nr_v138_train_set.fa.gz")
+ref2 = paste0(dbpath, "silva_species_assignment_v138.fa.gz")
+ref3 = paste0(dbpath, "16SMicrobial.fa.gz")
 
-taxtab <- assignTaxonomy(st.nochim, refFasta=ref1, minBoot=80, tryRC = TRUE, outputBootstraps=TRUE, verbose=TRUE, multithread=TRUE)
-spec_silva <- assignSpecies(getSequences(st.nochim), ref2, allowMultiple = FALSE, tryRC = TRUE, verbose = TRUE)
-spec_ncbi <- assignSpecies(getSequences(st.nochim), ref3, allowMultiple = FALSE, tryRC = TRUE, verbose = TRUE)
+taxtab = assignTaxonomy(st.nochim, refFasta = ref1, minBoot = 80, tryRC = TRUE, outputBootstraps = TRUE, verbose = TRUE, multithread = TRUE)
+spec_silva = assignSpecies(getSequences(st.nochim), ref2, allowMultiple = FALSE, tryRC = TRUE, verbose = TRUE)
+spec_ncbi = assignSpecies(getSequences(st.nochim), ref3, allowMultiple = FALSE, tryRC = TRUE, verbose = TRUE)
 
 s_silva = data.frame(spec_silva)
 rownames(s_silva) = svid
@@ -53,32 +53,32 @@ s_final = s_final[order(row.names(s_final)),]
 s_final = as.matrix(s_final)
 
 if("Genus" %in% colnames(taxtab$tax)) {
-        gcol <- which(colnames(taxtab$tax) == "Genus")
-} else { gcol <- ncol(taxtab$tax) }
-
-matchGenera <- function(gen.tax, gen.binom, split.glyph="/") {
-  if(is.na(gen.tax) || is.na(gen.binom)) { return(FALSE) }
-  if((gen.tax==gen.binom) ||
-     grepl(paste0("^", gen.binom, "[ _", split.glyph, "]"), gen.tax) ||
-     grepl(paste0(split.glyph, gen.binom, "$"), gen.tax)) {
-    return(TRUE)
-  } else {
-    return(FALSE)
-  }
+        gcol = which(colnames(taxtab$tax) == "Genus")
+} else { 
+	gcol = ncol(taxtab$tax) 
 }
 
-gen.match <- mapply(matchGenera, taxtab$tax[,gcol], s_final[,1])
-taxtab$tax <- cbind(taxtab$tax, s_final[,2])
-colnames(taxtab$tax)[ncol(taxtab$tax)] <- "Species"
-#print(paste(sum(!is.na(s_final[,2])), "out of", nrow(s_final), "were assigned to the species level."))
+matchGenera <- function(gen.tax, gen.binom, split.glyph="/") {
+	if(is.na(gen.tax) || is.na(gen.binom)) { return(FALSE) }
+	if((gen.tax==gen.binom) || grepl(paste0("^", gen.binom, "[ _", split.glyph, "]"), gen.tax) || grepl(paste0(split.glyph, gen.binom, "$"), gen.tax)) {
+		return(TRUE)
+	} else {
+		return(FALSE)
+	}
+}
 
-taxtab$tax[!gen.match,"Species"] <- NA
-#print(paste("Of which", sum(!is.na(taxtab$tax[,"Species"])),"had genera consistent with the input table."))
+gen.match = mapply(matchGenera, taxtab$tax[,gcol], s_final[,1])
+taxtab$tax = cbind(taxtab$tax, s_final[,2])
+colnames(taxtab$tax)[ncol(taxtab$tax)] = "Species"
+print(paste(sum(!is.na(s_final[,2])), "out of", nrow(s_final), "were assigned to the species level."))
+
+taxtab$tax[!gen.match,"Species"] = NA
+print(paste("Of which", sum(!is.na(taxtab$tax[,"Species"])),"had genera consistent with the input table."))
 
 # Prepare df
-df <- data.frame(sequence=colnames(st.nochim), abundance=colSums(st.nochim))
+df = data.frame(sequence = colnames(st.nochim), abundance = colSums(st.nochim))
 SVformat = paste("%0",nchar(as.character(nrow(df))),"d", sep="")
-df$id <- paste0("SV", sprintf(SVformat, seq(nrow(df))))
+df$id = paste0("SV", sprintf(SVformat, seq(nrow(df))))
 #uniquesToFasta(df, "dada2_out.fasta", id=df$id)
 
 df = merge(df, as.data.frame(taxtab), by = "row.names")
@@ -86,25 +86,27 @@ rownames(df) = df$id
 df = df[order(df$id),2:ncol(df)]
 
 # Construct phylogenetic tree
-seqs <- getSequences(st.nochim)
-names(seqs) <- df$id # This propagates to the tip labels of the tree
-alignment <- AlignSeqs(DNAStringSet(seqs), anchor=NA)
+seqs = getSequences(st.nochim)
+names(seqs) = df$id # This propagates to the tip labels of the tree
+alignment = DECIPHER::AlignSeqs(DNAStringSet(seqs), anchor=NA)
 
 # Export alignment
-phang.align <- phyDat(as(alignment, "matrix"), type="DNA")
-write.phyDat(phang.align, file="alignment.fasta", format="fasta")
-write.phyDat(phang.align, file="alignment.aln", format="phylip")
+phang.align = phangorn::phyDat(as(alignment, "matrix"), type="DNA")
+phangorn::write.phyDat(phang.align, file="alignment.fasta", format="fasta")
+phangorn::write.phyDat(phang.align, file="alignment.aln", format="phylip")
 
-#######################################################
-# Run below 2 commands outside R in Linux environment
-#/path-to-script/raxmlHPC-PTHREADS-SSE3 -T 2 -f E -p 1234 -x 5678 -m GTRCAT -N 1 -s alignment.aln -n raxml_tree_GTRCAT
-#/path-to-script/raxml-ng --evaluate --force --seed 1234 --log progress --threads 2 --msa alignment.fasta --model GTR+G --tree RAxML_fastTree.raxml_tree_GTRCAT --brlen scaled --prefix GTRCAT
-#######################################################
+# Phylogenetic tree construction
+# Use system2() to execute commands in R
+raxml = "/path-to-script/raxmlHPC-PTHREADS-SSE3"
+raxmlng = "/path-to-script/raxml-ng"
+
+system2(raxml, args = c("-T 2", "-f E", "-p 1234", "-x 5678", "-m GTRCAT", "-N 1", "-s alignment.aln", "-n raxml_tree_GTRCAT"))
+system2(raxmlng, args = c("--evaluate", "--force", "--seed 1234", "--log progress", "--threads 2", "--msa alignment.fasta", "--model GTR+G", "--tree RAxML_fastTree.raxml_tree_GTRCAT", "--brlen scaled", "--prefix GTRCAT"))
 
 # Import tree
 # raxml-ng (v0.7.0): GTRCAT.raxml.mlTrees
 # raxml-ng (v0.9.0): GTRCAT.raxml.bestTree
-raxml_tree <- read_tree("GTRCAT.raxml.bestTree")
+raxml_tree = read_tree("GTRCAT.raxml.bestTree")
 
 # Load sample info (sample.meta); Example content:
 #  Sample_ID   File_ID    Batch     Group
@@ -113,11 +115,11 @@ raxml_tree <- read_tree("GTRCAT.raxml.bestTree")
 #    Sample3  oldname3     run2         A
 #    Sample4  oldname4     run2         B
 
-samdf <- data.frame(fread("sample.meta", colClasses = "character"))
+samdf = data.frame(fread("sample.meta", colClasses = "character"))
 
 rownames(samdf) = samdf$Sample_ID
 samdf$Sample_ID = as.factor(samdf$Sample_ID)
-rownames(st.nochim) = as.character(samdf[match(rownames(st.nochim), samdf$File_ID),]$Sample_ID) # Update id if necessary
+#rownames(st.nochim) = as.character(samdf[match(rownames(st.nochim), samdf$File_ID),]$Sample_ID) # Update sample id in "st.nochim" if necessary
 samdf$Sample_ID = factor(samdf$Sample_ID, levels=c(sort(levels(samdf$Sample_ID), decreasing=F)))
 samdf$Batch = as.factor(samdf$Batch)
 samdf$Group = as.factor(samdf$Group)
@@ -126,14 +128,13 @@ new_seqtab = st.nochim
 new_taxtab = taxtab
 colnames(new_seqtab) = df[match(colnames(new_seqtab), df$sequence),]$id
 rownames(new_taxtab$tax) = df[match(rownames(new_taxtab$tax), df$sequence),]$id
+
 tax = as.data.frame(new_taxtab$tax)
 tax$Family = as.character(tax$Family)
 tax$Genus = as.character(tax$Genus)
-tax[grep("Family",tax$Family),]$Family = paste0(tax[grep("Family",tax$Family),]$Class,"_",tax[grep("Family",tax$Family),]$Family)
-tax[is.na(tax$Genus) & !is.na(tax$Family),]$Genus = paste(tax[is.na(tax$Genus) & !is.na(tax$Family),]$Family,"_ge",sep="")
 
 # Combine data into a phyloseq object
-ps <- phyloseq(tax_table(as.matrix(tax)), sample_data(samdf), otu_table(new_seqtab, taxa_are_rows = FALSE), phy_tree(raxml_tree))
+ps = phyloseq(tax_table(as.matrix(tax)), sample_data(samdf), otu_table(new_seqtab, taxa_are_rows = FALSE), phy_tree(raxml_tree))
 
 # Save current workspace
 # save.image(file="image2.RData")
