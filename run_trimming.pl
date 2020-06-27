@@ -67,7 +67,7 @@ foreach my $f (glob("$path/$raw/*_R1_001.fastq.gz")) {
 
 	print "Running cutadapt on Sample $nid\n";
 
-	$opt = "--match-read-wildcards --no-indels --error-rate 0.15 --overlap 8";	# Maximum error rate 0.15; Minimum overlap 8
+	$opt = "-j 0 --match-read-wildcards --no-indels --error-rate 0.15 --overlap 8";	# Maximum error rate 0.15; Minimum overlap 8
 	$cmd = "cutadapt $opt -g $primerF -o $tmp/$nid.01.fastq.gz -p $tmp/$nid.02.fastq.gz $fq1 $fq2 > $log";
 	print "$cmd\n";
 	system($cmd);
@@ -75,7 +75,7 @@ foreach my $f (glob("$path/$raw/*_R1_001.fastq.gz")) {
 	print"$cmd\n";
 	system($cmd);
 
-	$opt = "--match-read-wildcards --no-indels --error-rate 0.15 --overlap 10 --minimum-length=200";
+	$opt = "-j 0 --match-read-wildcards --no-indels --error-rate 0.15 --overlap 10 --minimum-length=200";
 	$cmd = "cutadapt $opt -a $primerRrev -o $tmp/$nid.21.fastq.gz -p $tmp/$nid.22.fastq.gz $tmp/$nid.11.fastq.gz $tmp/$nid.12.fastq.gz >> $log";
 	print "$cmd\n";
 	system($cmd);
