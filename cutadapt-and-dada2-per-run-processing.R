@@ -73,7 +73,7 @@ for(i in ii) {
 }
 dev.off()
 
-# Set directory to place cutadapt-filterd files
+# Set directory to place dada2-filterd files
 path.filt = file.path("filtered")
 filtFs = file.path(path.filt, basename(fnFs.cut))
 filtRs = file.path(path.filt, basename(fnRs.cut))
