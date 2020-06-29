@@ -38,7 +38,7 @@ biocLite(c("dada2", "phyloseq", "DECIPHER", "DESeq2", "ShortRead", "Biostrings")
 * Part 1 - **dada2-per-run-processing.R**
 * Part 2 - **dada2-create-phyloseq-obj.R**
 
-### 3. phylogenetic tree construction (RAxML)
+### 3. Phylogenetic tree construction (RAxML)
 [**RAxML**](https://github.com/stamatak/standard-RAxML):
 
 Download the source file `standard-RAxML-x.x.x.tar.gz`
