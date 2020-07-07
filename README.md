@@ -31,8 +31,21 @@ biocLite(c("dada2", "phyloseq", "DECIPHER", "DESeq2", "ShortRead", "Biostrings")
 
 ### 1. PCR primer trimming using [cutadapt](https://cutadapt.readthedocs.io/en/stable/)
 * **run_trimming.pl**
+```
+Usage: perl run_trimming.pl project_folder fastq_folder forward_primer_sequence reverse_primer_sequence
+```
+
+* **Example:**
+  - project_folder: PRJEB27564
+  - fastq_folder: raw
+  - forward_primer_sequence: 5'-CCTACGGGNGGCWGCAG-3'
+  - reverse_primer_sequence: 5'-GACTACHVGGGTATCTAATCC-3'
+
+```
+Usage: perl run_trimming.pl PRJEB27564 raw CCTACGGGNGGCWGCAG GACTACHVGGGTATCTAATCC
+```
+
 * Cutadapt can run on multiple CPU cores in parallel but is only available on Python 3
-* To enable it, use the option `-j N` (or the long form `--cores=N`), where N is the number of cores to use
 
 ### 2. [DADA2](https://benjjneb.github.io/dada2/) amplicon sequence variant (ASV) inference
 * Part 1 - **dada2-per-run-processing.R**
