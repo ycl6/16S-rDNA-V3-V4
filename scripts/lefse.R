@@ -1,21 +1,21 @@
 # By I-Hsuan Lin
 # Return lefse objects
 
-lefse_1name_obj = function(ps, group) {
+lefse_1name_obj <- function(ps, group) {
 	tax = as.data.frame(rbind(c("class",as.vector(group))), stringsAsFactors = FALSE)
 	colnames(tax) = c("name", sample_names(ps))
 	tax = rbind(tax, c("subject", sample_names(ps)))
 	return(tax)
 }
 
-lefse_2name_obj = function(ps, group, subgroup) {
+lefse_2name_obj <- function(ps, group, subgroup) {
 	tax = as.data.frame(rbind(c("class",as.vector(group)), c("subclass", as.vector(subgroup))), stringsAsFactors = FALSE)
 	colnames(tax) = c("name", sample_names(ps))
 	tax = rbind(tax, c("subject", sample_names(ps)))
 	return(tax)
 }
 
-lefse_obj = function(ps) {
+lefse_obj <- function(ps) {
 	tax1 = ps %>% tax_glom(taxrank = "Kingdom") %>% transform_sample_counts(function(x) {x/sum(x)} ) %>% psmelt()
 	tax1 = tax1[order(tax1$Sample),]
 	tax1 = reshape2::dcast(tax1, Kingdom~Sample, value.var = "Abundance")
@@ -87,4 +87,16 @@ lefse_obj = function(ps) {
 	lefse$name = as.character(lefse$name)
 
 	return(lefse)
+}
+
+pcorrection <- function(res, q) {
+	res$q = p.adjust(res$V5, method = "fdr")
+	res[is.na(res$q),]$q = "-"
+
+	res[res$q > q, "V3"] = ""
+	res[res$q > q, "V4"] = ""
+	res[is.na(res$V4), "V4"] = ""
+	res[res$q > q, "V5"] = "-"
+	res[res$q > q,  "q"] = "-"
+	return(res)
 }
