@@ -15,21 +15,28 @@ st.all = mergeSequenceTables(s01, s02)
 
 # To sum values of same sample from multiple sequence table (i.e. when a sample was re-sequenced due to low depth)
 # st.all = mergeSequenceTables(s01, s02, repeats = "sum")
+
+# Remove bimeras (two-parent chimeras)
 st.nochim = removeBimeraDenovo(st.all, verbose = TRUE, multithread = TRUE)
 
 SVformat = paste("%0",nchar(as.character(ncol(st.nochim))),"d", sep="")
 svid = paste0("SV", sprintf(SVformat, seq(ncol(st.nochim))))
 
 # Assign taxonomy
+# Note to change the PATH to reference training datasets accordingly
 dbpath = "/path-to-db/"
 ref1 = paste0(dbpath, "silva_nr_v138_train_set.fa.gz")
 ref2 = paste0(dbpath, "silva_species_assignment_v138.fa.gz")
 ref3 = paste0(dbpath, "16SMicrobial.fa.gz")
 
+# Classifies sequences against SILVA reference training dataset
 taxtab = assignTaxonomy(st.nochim, refFasta = ref1, minBoot = 80, tryRC = TRUE, outputBootstraps = TRUE, verbose = TRUE, multithread = TRUE)
+
+# Taxonomic assignment to the species level by exact matching against SILVA and NCBI reference datasets
 spec_silva = assignSpecies(getSequences(st.nochim), ref2, allowMultiple = FALSE, tryRC = TRUE, verbose = TRUE)
 spec_ncbi = assignSpecies(getSequences(st.nochim), ref3, allowMultiple = FALSE, tryRC = TRUE, verbose = TRUE)
 
+# Combine species-level taxonomic assignment from 2 reference sources
 s_silva = data.frame(spec_silva)
 rownames(s_silva) = svid
 
@@ -79,7 +86,6 @@ print(paste("Of which", sum(!is.na(taxtab$tax[,"Species"])),"had genera consiste
 df = data.frame(sequence = colnames(st.nochim), abundance = colSums(st.nochim))
 SVformat = paste("%0",nchar(as.character(nrow(df))),"d", sep="")
 df$id = paste0("SV", sprintf(SVformat, seq(nrow(df))))
-#uniquesToFasta(df, "dada2_out.fasta", id=df$id)
 
 df = merge(df, as.data.frame(taxtab), by = "row.names")
 rownames(df) = df$id
@@ -97,6 +103,7 @@ phangorn::write.phyDat(phang.align, file="alignment.aln", format="phylip")
 
 # Phylogenetic tree construction
 # Use system2() to execute commands in R
+# Note to change the PATH to raxml and raxmlng accordingly
 raxml = "/path-to-script/raxmlHPC-PTHREADS-SSE3"
 raxmlng = "/path-to-script/raxml-ng"
 
@@ -108,18 +115,19 @@ system2(raxmlng, args = c("--evaluate", "--force", "--seed 1234", "--log progres
 # raxml-ng (v0.9.0): GTRCAT.raxml.bestTree
 raxml_tree = read_tree("GTRCAT.raxml.bestTree")
 
-# Load sample info (sample.meta); Example content:
+# Load sample info (sample.meta)
+samdf = data.frame(fread("sample.meta", colClasses = "character"))
+
+# Example content:
 #  Sample_ID   File_ID    Batch     Group
 #    Sample1  oldname1     run1         A
 #    Sample2  oldname2     run1         B
 #    Sample3  oldname3     run2         A
 #    Sample4  oldname4     run2         B
 
-samdf = data.frame(fread("sample.meta", colClasses = "character"))
-
 rownames(samdf) = samdf$Sample_ID
 samdf$Sample_ID = as.factor(samdf$Sample_ID)
-#rownames(st.nochim) = as.character(samdf[match(rownames(st.nochim), samdf$File_ID),]$Sample_ID) # Update sample id in "st.nochim" if necessary
+rownames(st.nochim) = as.character(samdf[match(rownames(st.nochim), samdf$File_ID),]$Sample_ID)	# Update sample id in "st.nochim" if necessary
 samdf$Sample_ID = factor(samdf$Sample_ID, levels=c(sort(levels(samdf$Sample_ID), decreasing=F)))
 samdf$Batch = as.factor(samdf$Batch)
 samdf$Group = as.factor(samdf$Group)

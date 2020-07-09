@@ -1,6 +1,6 @@
 # 16S rDNA V3-V4 amplicon sequencing analysis
 
-This GitHub repository includes codes and scripts that demonstrate the use of `dada2` and `phyloseq` (and other tools and R packages) to analyze 16S rDNA amplicon sequencing data. An working example is included in the `example` folder. 
+This GitHub repository includes codes and scripts that demonstrate the use of `dada2` and `phyloseq` (and associated tools and R packages) to analyze 16S rDNA amplicon sequencing data. An working example is included in the `example` folder.
 
 **Disclaimer:**
 Do not use any of the provided codes and scripts in production without fully understanding of the contents. I am not responsible for errors or omissions or for any consequences from use of the contents and make no warranty with respect to the currency, completeness, or accuracy of the contents from this GitHub repository.
@@ -8,7 +8,8 @@ Do not use any of the provided codes and scripts in production without fully und
 ## Install required R packages
 
 ```
-install.packages(c("ggplot2","data.table","plyr","dplyr","phangorn","ggbeeswarm","ggrepel","vegan","GUniFrac"))
+install.packages(c("ggplot2", "data.table", "plyr", "dplyr", "phangorn", "ape", "reshape2", "gridExtra", 
+	"ggbeeswarm", "ggrepel", "vegan", "GUniFrac"))
 ```
 
 For R version >= 3.5 (Bioconductor version >= 3.8):
@@ -16,30 +17,43 @@ For R version >= 3.5 (Bioconductor version >= 3.8):
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
-BiocManager::install(c("dada2", "phyloseq", "DECIPHER", "DESeq2"))
+BiocManager::install(c("dada2", "phyloseq", "DECIPHER", "DESeq2", "ShortRead", "Biostrings", "biomformat"))
 ```
 
 For older versions of R:
 ```
 source("https://bioconductor.org/biocLite.R")
-biocLite(c("dada2", "phyloseq", "DECIPHER", "DESeq2"))
+biocLite(c("dada2", "phyloseq", "DECIPHER", "DESeq2", "ShortRead", "Biostrings", "biomformat"))
 ```
 
 ## Workflow
 
-1. PCR primer trimming (***run_trimming.pl***)
-* cutadapt: 
-  * https://cutadapt.readthedocs.io/en/stable/
-  * Cutadapt can run on multiple CPU cores in parallel but is only available on Python 3
-  * To enable it, use the option `-j N` (or the long form `--cores=N`), where N is the number of cores to use
+> **Update**: Check out the new script **cutadapt-and-dada2-per-run-processing.R**, which combines running of cutadapt and DADA2 per-run-processing in one script
 
-2. DADA2 part 1 (***dada2-per-run-processing.R***) and part 2 (***dada2-create-phyloseq-obj.R***)
-* DADA2 GitHub: https://benjjneb.github.io/dada2/
+### 1. PCR primer trimming using [cutadapt](https://cutadapt.readthedocs.io/en/stable/)
+* **run_trimming.pl**
+```
+Usage: perl run_trimming.pl project_folder fastq_folder forward_primer_sequence reverse_primer_sequence
+```
 
-3. phylogenetic tree construction (RAxML)
+* **Example:**
+  - project_folder: PRJEB27564
+  - fastq_folder: raw
+  - forward_primer_sequence: 5'-CCTACGGGNGGCWGCAG-3'
+  - reverse_primer_sequence: 5'-GACTACHVGGGTATCTAATCC-3'
 
-**RAxML:**
-https://github.com/stamatak/standard-RAxML
+```
+Usage: perl run_trimming.pl PRJEB27564 raw CCTACGGGNGGCWGCAG GACTACHVGGGTATCTAATCC
+```
+
+* Cutadapt can run on multiple CPU cores in parallel but is only available on Python 3
+
+### 2. [DADA2](https://benjjneb.github.io/dada2/) amplicon sequence variant (ASV) inference
+* Part 1 - **dada2-per-run-processing.R**
+* Part 2 - **dada2-create-phyloseq-obj.R**
+
+### 3. Phylogenetic tree construction (RAxML)
+[**RAxML**](https://github.com/stamatak/standard-RAxML):
 
 Download the source file `standard-RAxML-x.x.x.tar.gz`
 
@@ -47,8 +61,7 @@ Use `tar zxvf standard-RAxML-x.x.x.tar.gz` to extract file
 
 Use `make -f Makefile.SSE3.PTHREADS.gcc` to compile specific version
 
-**raxml-ng:**
-https://github.com/amkozlov/raxml-ng
+[**raxml-ng**](https://github.com/amkozlov/raxml-ng):
 
 Download the pre-compiled binary `raxml-ng_vx.x.x_linux_x86_64.zip` (change x.x.x to downloaded version)
 
@@ -58,19 +71,18 @@ mkdir raxml-ng_vx.x.x
 unzip raxml-ng_vx.x.x_linux_x86_64.zip -d raxml-ng_vx.x.x
 ```
 
-4. phyloseq (***phyloseq-analysis.R***)
-* phyloseq  GitHub: https://joey711.github.io/phyloseq/
+### 4. Explore microbiome profiles using [phyloseq](https://joey711.github.io/phyloseq/) 
+* **phyloseq-analysis.R**
 
-5. LEfSe and GraPhlAn (***lefse-analysis.R***) 
+### 5. Identify and plot differential taxa features using LEfSe and GraPhlAn
+* **lefse-analysis.R**
 * Requires ***Python 2.7***
-* LEfSe Download: https://bitbucket.org/nsegata/lefse/downloads/ (unzip nsegata-lefse-9adc3a62460e.zip)
+* [**LEfSe**](https://bitbucket.org/nsegata/lefse/downloads/): Download and unzip `nsegata-lefse-9adc3a62460e.zip`
   * Additional packages required: rpy2, numpy, matplotlib, argparse
   * Additional R libraries required: survival, mvtnorm, modeltools, coin, MASS
-* export2graphlan: Install using `conda install -c bioconda export2graphlan`
-  * https://github.com/segatalab/export2graphlan
+* [**export2graphlan**](https://github.com/segatalab/export2graphlan): Install using `conda install -c bioconda export2graphlan`
   * Additional packages required: pandas, scipy
-* GraPhlAn Download: Install using `conda install -c bioconda graphlan`
-  * https://bitbucket.org/nsegata/graphlan/wiki/Home
+* [**GraPhlAn**](https://bitbucket.org/nsegata/graphlan/wiki/Home) Install using `conda install -c bioconda graphlan`
   * Additional packages required: biopython, matplotlib
 
 ## Download Silva and NCBI taxonomy DB
