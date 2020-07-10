@@ -8,7 +8,7 @@ Do not use any of the provided codes and scripts in production without fully und
 ## Install required R packages
 
 ```
-install.packages(c("ggplot2", "data.table", "plyr", "dplyr", "phangorn", "ape", "reshape2", "gridExtra", 
+install.packages(c("ggplot2", "data.table", "R.utils", "plyr", "dplyr", "phangorn", "ape", "reshape2", "gridExtra", 
 	"ggbeeswarm", "ggrepel", "vegan", "GUniFrac"))
 ```
 
