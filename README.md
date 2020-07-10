@@ -17,13 +17,14 @@ For R version >= 3.5 (Bioconductor version >= 3.8):
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
-BiocManager::install(c("dada2", "phyloseq", "DECIPHER", "DESeq2", "ShortRead", "Biostrings", "biomformat"))
+BiocManager::install(c("dada2", "phyloseq", "DECIPHER", "DESeq2", "ShortRead", "Biostrings", 
+	"biomformat", "ALDEx2"))
 ```
 
 For older versions of R:
 ```
 source("https://bioconductor.org/biocLite.R")
-biocLite(c("dada2", "phyloseq", "DECIPHER", "DESeq2", "ShortRead", "Biostrings", "biomformat"))
+biocLite(c("dada2", "phyloseq", "DECIPHER", "DESeq2", "ShortRead", "Biostrings", "biomformat", "ALDEx2"))
 ```
 
 ## Workflow
