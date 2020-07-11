@@ -4,12 +4,13 @@ library("dada2")
 library("ggplot2")
 options(width = 190)
 
-fastq = "trimmed"
-filt = "filt"
+# Set path
+trimmed = "trimmed"	# cutadapt trimmed fastq files
+filt = "filt"		# dada2 trimmed fastq files
 
-fns = sort(list.files(fastq, full.names = TRUE))
-fnFs = fns[grep(".1.fastq.gz", fns)]
-fnRs = fns[grep(".2.fastq.gz", fns)]
+fns = sort(list.files(trimmed, full.names = TRUE))
+fnFs = fns[grep("1.fastq.gz", fns)]
+fnRs = fns[grep("2.fastq.gz", fns)]
 sample.names = gsub(".1.fastq.gz", "", basename(fnFs))
 
 # Plot quality profile of fastq files
@@ -22,24 +23,23 @@ for(i in ii) {
 }
 dev.off()
 
-if(!file_test("-d", filt)) dir.create(filt)
+# Set paths to the dada2-filterd files
+filtFs = file.path(filt, basename(fnFs))
+filtRs = file.path(filt, basename(fnRs))
 
-filtFs <- file.path(filt, basename(fnFs))
-filtRs <- file.path(filt, basename(fnRs))
-
-# Filtering and trimming
+# Perform filtering and trimming
 # Review "plotQualityProfile.pdf" to select the best paramters for truncLen
 out = filterAndTrim(fnFs, filtFs, fnRs, filtRs, 
-                     # Need to keep paramters consistent between runs of the same study
-                     truncLen = c(260,200), minLen = 200, maxN = 0, truncQ = 2, maxEE = c(2,5),
-                     rm.phix = TRUE, compress = TRUE, verbose = TRUE, multithread = TRUE)
+	# Need to keep paramters consistent between runs of the same study
+	truncLen = c(260,200), minLen = 200, maxN = 0, truncQ = 2, maxEE = c(2,5),
+	rm.phix = TRUE, compress = TRUE, verbose = TRUE, multithread = TRUE)
 
 out = as.data.frame(out)
 rownames(out) = sample.names
 head(out, 10)
 
-# Learn the Error Rates
-# The derepFastq function used in past workflow has been intergrated into learnErrors function
+# Dereplication and learn the error rates (Default: nbases = 1e8)
+# derepFastq() has been intergrated into learnErrors()
 errF = learnErrors(filtFs, multithread = TRUE)
 errR = learnErrors(filtRs, multithread = TRUE)
 
@@ -54,16 +54,16 @@ dev.off()
 dadaFs = dada(filtFs, err = errF, pool = FALSE, multithread = TRUE)
 dadaRs = dada(filtRs, err = errR, pool = FALSE, multithread = TRUE)
 
-# Merge paired reads (Default: minOverlap = 20; maxMismatch = 0)
+# Merge paired reads (Default: minOverlap = 12; maxMismatch = 0)
 mergers = mergePairs(dadaFs, filtFs, dadaRs, filtRs, verbose = TRUE)
 
-# Construct a sample-by-sequence observation matrix
+# Construct sequence table
 seqtab = makeSequenceTable(mergers)
 
 table(nchar(getSequences(seqtab)))
 
 # Save sequence table
-saveRDS(seqtab, "seqtab.rds") # or as an example, use seqtab[c(1:5),] to save data for a subset of 5 samples
+saveRDS(seqtab, "seqtab.rds") # or as an example, use seqtab[c(1:5),] to save data for a subset of the first 5 samples
 
 # Save current workspace
 # save.image(file="image.RData")
