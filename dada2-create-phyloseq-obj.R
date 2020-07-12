@@ -6,6 +6,9 @@ library("phyloseq")
 library("ggplot2")
 options(width=190)
 
+# Load saved workspace
+# save.image(file="image.RData")
+
 # Load sequence table from multiple runs
 s01 = readRDS("seqtab1.rds")
 s02 = readRDS("seqtab2.rds")
@@ -13,14 +16,27 @@ s02 = readRDS("seqtab2.rds")
 # Merge sequence table and remove chimeras
 st.all = mergeSequenceTables(s01, s02)
 
+# If this script is used independently and the "sample.names" is not carried over from previous step/script
+# sample.names = gsub(".1.fastq.gz", "", rownames(st.all))
+
 # To sum values of same sample from multiple sequence table (i.e. when a sample was re-sequenced due to low depth)
 # st.all = mergeSequenceTables(s01, s02, repeats = "sum")
 
 # Remove bimeras (two-parent chimeras)
 st.nochim = removeBimeraDenovo(st.all, verbose = TRUE, multithread = TRUE)
+rownames(st.nochim) = sample.names
 
-SVformat = paste("%0",nchar(as.character(ncol(st.nochim))),"d", sep="")
-svid = paste0("SV", sprintf(SVformat, seq(ncol(st.nochim))))
+dim(seqtab)
+dim(seqtab.nochim)
+sum(seqtab.nochim)/sum(seqtab)
+
+# Track reads through the pipeline
+# If you load saved workspace from previous step/script, you will have the necessary objects to build the track data.frame
+# getN <- function(x) sum(getUniques(x))
+# track = cbind(out, sapply(dadaFs, getN), sapply(dadaRs, getN), sapply(mergers, getN), rowSums(seqtab.nochim))
+# colnames(track) = c("Trimmed", "Filtered", "denoisedF", "denoisedR", "merged", "nonchim")
+# track = cbind(data.frame(SampleID = sample.names), track)
+# write.table(track, file = "track.txt", sep = "\t", quote = F, row.names = F, col.names = T)
 
 # Assign taxonomy
 # Note to change the PATH to reference training datasets accordingly
@@ -37,13 +53,15 @@ spec_silva = assignSpecies(getSequences(st.nochim), ref2, allowMultiple = FALSE,
 spec_ncbi = assignSpecies(getSequences(st.nochim), ref3, allowMultiple = FALSE, tryRC = TRUE, verbose = TRUE)
 
 # Combine species-level taxonomic assignment from 2 reference sources
-s_silva = data.frame(spec_silva)
+SVformat = paste("%0",nchar(as.character(ncol(st.nochim))),"d", sep = "")
+svid = paste0("SV", sprintf(SVformat, seq(ncol(st.nochim))))
+
+s_silva = as.data.frame(spec_silva, stringsAsFactors = FALSE)
 rownames(s_silva) = svid
 
-s_ncbi = data.frame(spec_ncbi)
+s_ncbi = as.data.frame(spec_ncbi, stringsAsFactors = FALSE)
 rownames(s_ncbi) = svid
-s_ncbi[grep("\\[",s_ncbi$Genus),]$Species = NA
-s_ncbi[grep("\\[",s_ncbi$Genus),]$Genus = NA
+s_ncbi$Genus = gsub("\\[|\\]", "", s_ncbi$Genus)
 
 s_merged = cbind(s_ncbi, s_silva)
 colnames(s_merged) = c("nGenus","nSpecies","sGenus","sSpecies")
@@ -65,9 +83,9 @@ if("Genus" %in% colnames(taxtab$tax)) {
 	gcol = ncol(taxtab$tax) 
 }
 
-matchGenera <- function(gen.tax, gen.binom, split.glyph="/") {
+matchGenera <- function(gen.tax, gen.binom, split.glyph = "/") {
 	if(is.na(gen.tax) || is.na(gen.binom)) { return(FALSE) }
-	if((gen.tax==gen.binom) || grepl(paste0("^", gen.binom, "[ _", split.glyph, "]"), gen.tax) || grepl(paste0(split.glyph, gen.binom, "$"), gen.tax)) {
+	if((gen.tax == gen.binom) || grepl(paste0("^", gen.binom, "[ _", split.glyph, "]"), gen.tax) || grepl(paste0(split.glyph, gen.binom, "$"), gen.tax)) {
 		return(TRUE)
 	} else {
 		return(FALSE)
@@ -80,26 +98,23 @@ colnames(taxtab$tax)[ncol(taxtab$tax)] = "Species"
 print(paste(sum(!is.na(s_final[,2])), "out of", nrow(s_final), "were assigned to the species level."))
 
 taxtab$tax[!gen.match,"Species"] = NA
-print(paste("Of which", sum(!is.na(taxtab$tax[,"Species"])),"had genera consistent with the input table."))
+print(paste("Of which", sum(!is.na(taxtab$tax[,"Species"])), "had genera consistent with the input table."))
 
 # Prepare df
-df = data.frame(sequence = colnames(st.nochim), abundance = colSums(st.nochim))
-SVformat = paste("%0",nchar(as.character(nrow(df))),"d", sep="")
-df$id = paste0("SV", sprintf(SVformat, seq(nrow(df))))
+df = data.frame(sequence = colnames(st.nochim), abundance = colSums(st.nochim), stringsAsFactors = FALSE)
+df$id = svid
 
 df = merge(df, as.data.frame(taxtab), by = "row.names")
 rownames(df) = df$id
 df = df[order(df$id),2:ncol(df)]
 
 # Construct phylogenetic tree
-seqs = getSequences(st.nochim)
-names(seqs) = df$id # This propagates to the tip labels of the tree
-alignment = DECIPHER::AlignSeqs(DNAStringSet(seqs), anchor=NA)
+alignment = DECIPHER::AlignSeqs(Biostrings::DNAStringSet(setNames(df$sequence, df$id)), anchor = NA)
 
 # Export alignment
-phang.align = phangorn::phyDat(as(alignment, "matrix"), type="DNA")
-phangorn::write.phyDat(phang.align, file="alignment.fasta", format="fasta")
-phangorn::write.phyDat(phang.align, file="alignment.aln", format="phylip")
+phang.align = phangorn::phyDat(as(alignment, "matrix"), type = "DNA")
+phangorn::write.phyDat(phang.align, file = "alignment.fasta", format = "fasta")
+phangorn::write.phyDat(phang.align, file = "alignment.aln", format = "phylip")
 
 # Phylogenetic tree construction
 # Use system2() to execute commands in R
@@ -119,22 +134,28 @@ raxml_tree = read_tree("GTRCAT.raxml.bestTree")
 samdf = data.frame(fread("sample.meta", colClasses = "character"))
 
 # Example content:
-#  Sample_ID   File_ID    Batch     Group
-#    Sample1  oldname1     run1         A
-#    Sample2  oldname2     run1         B
-#    Sample3  oldname3     run2         A
-#    Sample4  oldname4     run2         B
+#  Sample_ID     Run_ID    Batch    Group
+#    Sample1   ERR00001     run1        A
+#    Sample2   ERR00002     run1        B
+#    Sample3   ERR00003     run2        A
+#    Sample4   ERR00004     run2        B
 
 rownames(samdf) = samdf$Sample_ID
 samdf$Sample_ID = as.factor(samdf$Sample_ID)
-rownames(st.nochim) = as.character(samdf[match(rownames(st.nochim), samdf$File_ID),]$Sample_ID)	# Update sample id in "st.nochim" if necessary
-samdf$Sample_ID = factor(samdf$Sample_ID, levels=c(sort(levels(samdf$Sample_ID), decreasing=F)))
-samdf$Batch = as.factor(samdf$Batch)
-samdf$Group = as.factor(samdf$Group)
+samdf$Sample_ID = factor(samdf$Sample_ID, levels = c(sort(levels(samdf$Sample_ID), decreasing = F)))
+samdf$Batch = as.factor(samdf$Batch)	# Encode a vector as a factor, update the factor level if necessary
+samdf$Group = as.factor(samdf$Group)	# Encode a vector as a factor, update the factor level if necessary
 
+#head(samdf, 10)
+
+# Handoff to phyloseq
 new_seqtab = st.nochim
-new_taxtab = taxtab
 colnames(new_seqtab) = df[match(colnames(new_seqtab), df$sequence),]$id
+
+# Update rownames in new_seqtab from Run_ID to Sample_ID
+rownames(new_seqtab) = as.character(samdf[match(rownames(new_seqtab), samdf$Run_ID),]$Sample_ID)
+
+new_taxtab = taxtab
 rownames(new_taxtab$tax) = df[match(rownames(new_taxtab$tax), df$sequence),]$id
 
 tax = as.data.frame(new_taxtab$tax)
@@ -143,6 +164,8 @@ tax$Genus = as.character(tax$Genus)
 
 # Combine data into a phyloseq object
 ps = phyloseq(tax_table(as.matrix(tax)), sample_data(samdf), otu_table(new_seqtab, taxa_are_rows = FALSE), phy_tree(raxml_tree))
+
+ps
 
 # Save current workspace
 # save.image(file="image2.RData")
