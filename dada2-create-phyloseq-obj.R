@@ -17,7 +17,7 @@ s02 = readRDS("seqtab2.rds")
 st.all = mergeSequenceTables(s01, s02)
 
 # If this script is used independently and the "sample.names" is not carried over from previous step/script
-# sample.names = gsub(".1.fastq.gz", "", rownames(st.all))
+sample.names = gsub(".1.fastq.gz", "", rownames(st.all))
 
 # To sum values of same sample from multiple sequence table (i.e. when a sample was re-sequenced due to low depth)
 # st.all = mergeSequenceTables(s01, s02, repeats = "sum")
