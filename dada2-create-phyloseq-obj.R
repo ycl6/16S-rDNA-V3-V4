@@ -6,6 +6,8 @@ library("phyloseq")
 library("ggplot2")
 options(width=190)
 
+# Continued from DADA2 part 1 (dada2-per-run-processing.R or cutadapt-and-dada2-per-run-processing.R)
+
 # Load saved workspace
 # save.image(file="image.RData")
 
