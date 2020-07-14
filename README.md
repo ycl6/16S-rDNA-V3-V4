@@ -49,33 +49,42 @@ Usage: perl run_trimming.pl PRJEB27564 raw CCTACGGGNGGCWGCAG GACTACHVGGGTATCTAAT
 
 * Cutadapt can run on multiple CPU cores in parallel but is only available on Python 3
 
-### 2. [DADA2](https://benjjneb.github.io/dada2/) amplicon sequence variant (ASV) inference
-* Part 1 - **dada2-per-run-processing.R**
-* Part 2 - **dada2-create-phyloseq-obj.R**
+### 2a. [DADA2](https://benjjneb.github.io/dada2/) Part 1
+* **dada2-per-run-processing.R** - `cutadapt` performed before-hand
+* **cutadapt-and-dada2-per-run-processing.R** - Execute `cutadapt` in R by using `system2` function
+* dada2 filtering and trimming `filterAndTrim`
+* Amplicon sequence variant (ASV) inference
 
-### 3. Phylogenetic tree construction (RAxML)
-[**RAxML**](https://github.com/stamatak/standard-RAxML):
+### 2b. [DADA2](https://benjjneb.github.io/dada2/) Part 2
+* **dada2-create-phyloseq-obj.R**
+* Taxonomy and species assignment
+* Sample data preparation
+* Phylogenetic tree construction
 
-Download the source file `standard-RAxML-x.x.x.tar.gz`
+  1. [**RAxML**](https://github.com/stamatak/standard-RAxML):
 
-Use `tar zxvf standard-RAxML-x.x.x.tar.gz` to extract file
+  Download the source file `standard-RAxML-x.x.x.tar.gz`
 
-Use `make -f Makefile.SSE3.PTHREADS.gcc` to compile specific version
+  Use `tar zxvf standard-RAxML-x.x.x.tar.gz` to extract file
 
-[**raxml-ng**](https://github.com/amkozlov/raxml-ng):
+  Use `make -f Makefile.SSE3.PTHREADS.gcc` to compile specific version
 
-Download the pre-compiled binary `raxml-ng_vx.x.x_linux_x86_64.zip` (change x.x.x to downloaded version)
+  2. [**raxml-ng**](https://github.com/amkozlov/raxml-ng):
 
-To extract files to a directory:
-```
-mkdir raxml-ng_vx.x.x
-unzip raxml-ng_vx.x.x_linux_x86_64.zip -d raxml-ng_vx.x.x
-```
+  Download the pre-compiled binary `raxml-ng_vx.x.x_linux_x86_64.zip` (change x.x.x to downloaded version)
 
-### 4. Explore microbiome profiles using [phyloseq](https://joey711.github.io/phyloseq/) 
+  To extract files to a directory:
+  ```
+  mkdir raxml-ng_vx.x.x
+  unzip raxml-ng_vx.x.x_linux_x86_64.zip -d raxml-ng_vx.x.x
+  ```
+
+* Phyloseq object construction
+
+### 3. Explore microbiome profiles using [phyloseq](https://joey711.github.io/phyloseq/) 
 * **phyloseq-analysis.R**
 
-### 5. Identify and plot differential taxa features using LEfSe and GraPhlAn
+### 4. Identify and plot differential taxa features using LEfSe and GraPhlAn
 * **lefse-analysis.R**
 * Requires ***Python 2.7***
 * [**LEfSe**](https://bitbucket.org/nsegata/lefse/downloads/): Download and unzip `nsegata-lefse-9adc3a62460e.zip`
