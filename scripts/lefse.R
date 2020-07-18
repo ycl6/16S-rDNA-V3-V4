@@ -89,6 +89,18 @@ lefse_obj <- function(ps) {
 	return(lefse)
 }
 
+# To fix identifical phylum & class names (Actinobacteria and Deferribacteres) for Silva v132 users
+fix_taxa_silva132 <- function(DF) {
+	# fix Actinobacteria
+	DF$name = gsub("Bacteria\\|Actinobacteria","Bacteria|Actinobacteria_P", DF$name)
+	DF$name = gsub("Bacteria\\|Actinobacteria_P\\|Actinobacteria","Bacteria|Actinobacteria_P|Actinobacteria_C", DF$name)
+	# fix Deferribacteres
+	DF$name = gsub("Bacteria\\|Deferribacteres","Bacteria|Deferribacteres_P", DF$name)
+	DF$name = gsub("Bacteria\\|Deferribacteres_P\\|Deferribacteres","Bacteria|Deferribacteres_P|Deferribacteres_C", DF$name)
+
+	return(DF)
+}
+
 pcorrection <- function(res, q) {
 	res$q = p.adjust(res$V5, method = "fdr")
 	res[is.na(res$q),]$q = "-"
@@ -98,5 +110,6 @@ pcorrection <- function(res, q) {
 	res[is.na(res$V4), "V4"] = ""
 	res[res$q > q, "V5"] = "-"
 	res[res$q > q,  "q"] = "-"
+	
 	return(res)
 }
