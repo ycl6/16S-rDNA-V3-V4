@@ -113,4 +113,4 @@ table(nchar(getSequences(seqtab)))
 saveRDS(seqtab, "seqtab.rds") # or as an example, use seqtab[c(1:5),] to save data for a subset of the first 5 samples
 
 # Save current workspace
-# save.image(file="image.RData")
+# save.image(file = "image1.RData")

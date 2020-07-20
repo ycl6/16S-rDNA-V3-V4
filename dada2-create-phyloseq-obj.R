@@ -9,7 +9,7 @@ options(width=190)
 # Continued from DADA2 part 1 (dada2-per-run-processing.R or cutadapt-and-dada2-per-run-processing.R)
 
 # Load saved workspace
-# save.image(file="image.RData")
+# load("image1.RData")
 
 # Load sequence table from multiple runs
 s01 = readRDS("seqtab1.rds")
@@ -170,4 +170,4 @@ ps = phyloseq(tax_table(as.matrix(tax)), sample_data(samdf), otu_table(new_seqta
 ps
 
 # Save current workspace
-# save.image(file="image2.RData")
+# save.image(file = "image2.RData")
