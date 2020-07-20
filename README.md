@@ -33,6 +33,8 @@ biocLite(c("dada2", "phyloseq", "DECIPHER", "DESeq2", "ShortRead", "Biostrings",
 
 ### 1. PCR primer trimming using [cutadapt](https://cutadapt.readthedocs.io/en/stable/)
 * **run_trimming.pl**
+* Cutadapt can run on multiple CPU cores in parallel but is only available on ***Python 3***
+
 ```
 Usage: perl run_trimming.pl project_folder fastq_folder forward_primer_sequence reverse_primer_sequence
 ```
@@ -46,8 +48,6 @@ Usage: perl run_trimming.pl project_folder fastq_folder forward_primer_sequence 
 ```
 Usage: perl run_trimming.pl PRJEB27564 raw CCTACGGGNGGCWGCAG GACTACHVGGGTATCTAATCC
 ```
-
-* Cutadapt can run on multiple CPU cores in parallel but is only available on ***Python 3***
 
 ### 2a. [DADA2](https://benjjneb.github.io/dada2/) Part 1
 * **dada2-per-run-processing.R** - `cutadapt` performed before-hand
@@ -86,7 +86,7 @@ Usage: perl run_trimming.pl PRJEB27564 raw CCTACGGGNGGCWGCAG GACTACHVGGGTATCTAAT
 
 ### 4. Identify and plot differential taxa features using LEfSe and GraPhlAn
 * **lefse-analysis.R**
-* Requires ***Python 2.7***
+* **LEfSe** and **GraPhlAn** requires ***Python 2.7***
 * One can create a Python 2 conda environment to work with LEfSe and GraPhlAn
 
 ```
@@ -109,7 +109,8 @@ conda deactivate
   * Additional packages required: biopython, matplotlib
 
 ### 5. Infer functional capacity using [picrust2](https://github.com/picrust/picrust2) and statistical analysis using [ALDEx](https://github.com/ggloor/ALDEx_bioc)
-* Requires ***Python 3.5/3.6***
+* **picrust2-aldex-analysis.R**
+* **picrust2** requires ***Python 3.5/3.6***
 * Use `conda` to create conda environment with Python 3.6 and picrust2 2.3.0_b installed
 
 ```
