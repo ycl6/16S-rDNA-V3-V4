@@ -8,8 +8,8 @@ Do not use any of the provided codes and scripts in production without fully und
 ## Install required R packages
 
 ```
-install.packages(c("ggplot2", "data.table", "R.utils", "plyr", "dplyr", "phangorn", "ape", 
-	"reshape2", "gridExtra", "ggbeeswarm", "ggrepel", "vegan", "GUniFrac", "tibble"))
+install.packages(c("ggplot2", "data.table", "R.utils", "plyr", "dplyr", "phangorn", "ape", "reshape2", 
+	"gridExtra", "ggbeeswarm", "ggrepel", "vegan", "GUniFrac", "tibble"))
 ```
 
 For R version >= 3.5 (Bioconductor version >= 3.8):
@@ -47,7 +47,7 @@ Usage: perl run_trimming.pl project_folder fastq_folder forward_primer_sequence 
 Usage: perl run_trimming.pl PRJEB27564 raw CCTACGGGNGGCWGCAG GACTACHVGGGTATCTAATCC
 ```
 
-* Cutadapt can run on multiple CPU cores in parallel but is only available on Python 3
+* Cutadapt can run on multiple CPU cores in parallel but is only available on ***Python 3***
 
 ### 2a. [DADA2](https://benjjneb.github.io/dada2/) Part 1
 * **dada2-per-run-processing.R** - `cutadapt` performed before-hand
@@ -87,6 +87,19 @@ Usage: perl run_trimming.pl PRJEB27564 raw CCTACGGGNGGCWGCAG GACTACHVGGGTATCTAAT
 ### 4. Identify and plot differential taxa features using LEfSe and GraPhlAn
 * **lefse-analysis.R**
 * Requires ***Python 2.7***
+* One can create a Python 2 conda environment to work with LEfSe and GraPhlAn
+
+```
+# Create environment
+conda create --name p27 python=2.7
+
+# Activate environment
+source activate p27
+
+# Deactivate environment
+conda deactivate
+```
+
 * [**LEfSe**](https://bitbucket.org/nsegata/lefse/downloads/): Download and unzip `nsegata-lefse-9adc3a62460e.zip`
   * Additional packages required: rpy2, numpy, matplotlib, argparse
   * Additional R libraries required: survival, mvtnorm, modeltools, coin, MASS
@@ -94,6 +107,21 @@ Usage: perl run_trimming.pl PRJEB27564 raw CCTACGGGNGGCWGCAG GACTACHVGGGTATCTAAT
   * Additional packages required: pandas, scipy
 * [**GraPhlAn**](https://bitbucket.org/nsegata/graphlan/wiki/Home) Install using `conda install -c bioconda graphlan`
   * Additional packages required: biopython, matplotlib
+
+### 5. Infer functional capacity using [picrust2](https://github.com/picrust/picrust2) and statistical analysis using [ALDEx](https://github.com/ggloor/ALDEx_bioc)
+* Requires ***Python 3.5/3.6***
+* Use `conda` to create conda environment with Python 3.6 and picrust2 2.3.0_b installed
+
+```
+# Create environment
+conda create -n picrust2 -c bioconda -c conda-forge picrust2=2.3.0_b python=3.6
+
+# Activate environment
+conda activate picrust2
+
+# Deactivate environment
+conda deactivate
+```
 
 ## Download Silva and NCBI taxonomy DB
 
