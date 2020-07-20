@@ -57,7 +57,6 @@ if($pyv =~ /Python 3/) {
 }
 
 foreach my $f (glob("$fastq/*1.f*q.gz")) {
-
 	my $file = basename($f);
 	my $dir = dirname($f);
 	my $id = "";
@@ -75,8 +74,8 @@ foreach my $f (glob("$fastq/*1.f*q.gz")) {
 		die "Invalid file pattern: $file\n";
 	}
 	
-	my $trim1 = "$trimmed/$id\_1.fastq.gz"
-	my $trim2 = "$trimmed/$id\_2.fastq.gz"
+	my $trim1 = "$trimmed/$id\_1.fastq.gz";
+	my $trim2 = "$trimmed/$id\_2.fastq.gz";
 	my $log = "$trimmed/$id.log";
 	my $opt = "";
 	my $cmd = "";
