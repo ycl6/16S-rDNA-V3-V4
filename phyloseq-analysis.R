@@ -13,7 +13,7 @@ options(width=190)
 # Continued from DADA2 part 2 (dada2-create-phyloseq-obj.R)
 
 # Load saved workspace
-# save.image(file="image2.RData")
+# load("image2.RData")
 
 # Note to change the PATH to the "taxa_summary.R" script accordingly
 source("/path-to-script/taxa_summary.R", local = TRUE)
@@ -338,4 +338,4 @@ disp5 = betadisper(dist_bc, group = data.frame(sample_data(ps1))$Group)
 permutest(disp5, permutations = 1000)
 
 # Save current workspace
-# save.image(file="image3.RData")
+# save.image(file = "image3.RData")

@@ -11,7 +11,7 @@ options(width=190)
 # Continued from phyloseq workflow (phyloseq-analysis.R)
 
 # Load saved workspace
-# save.image(file="image3.RData")
+# load("image3.RData")
 
 # Note to change the PATH to the "lefse.R" script accordingly
 source("/path-to-script/lefse.R", local = TRUE)
@@ -29,6 +29,7 @@ lefse1$name = gsub("/","_",lefse1$name)
 # For **Silva v132** users, apply below to fix identifical phylum & class names (Actinobacteria and Deferribacteres)
 lefse1 = fix_taxa_silva132(lefse1)
 
+# Output the prepared LEfSe input to file
 write.table(lefse1, file="lefse/expr1.lefse_table.txt", sep = "\t", quote = F, row.names = F, col.names = F)
 
 # Set the full-path to the "nsegata-lefse" folder
@@ -61,7 +62,6 @@ graphlan_parser = "/path-to-script/lefse.pl"
 
 # Plot cladogram
 # Update the coloring file "lefse/expr1.colors" if necessary. The colors should be defined in HSV (hue, saturation, value) scale
-
 system2(export2graphlan,
         args = c("-i lefse/expr1.lefse_table.txt", "-o lefse/expr1.lefse_table.res.padj",
                  "-t lefse/expr1.graphlan_tree.txt", "-a lefse/expr1.graphlan_annot.txt",
@@ -93,8 +93,9 @@ levels(res1$taxon) = gsub("Escherichia_Shigella","Escherichia/Shigella",levels(r
 levels(res1$taxon) = gsub("_UCG_","_UCG-",levels(res1$taxon))
 
 plot_lefse = ggplot(res1, aes(taxon, LDA, fill = Group)) + geom_bar(stat = "identity", width = 0.7, size = 0.5) + coord_flip() + theme_bw() +
-facet_wrap(~ Group, ncol = 1, scales = "free_y") + theme(legend.position = "right", axis.text.x = element_text(size = 12), axis.text.y = element_text(face = "bold", size = 8),
-strip.text.x = element_text(face = "bold", size = 12)) + labs(title = "Linear discriminant analysis (LDA)\nEffect Size Analysis", x = "Taxon", y = "LDA")
+facet_wrap(~ Group, ncol = 1, scales = "free_y") + theme(legend.position = "right", 
+axis.text.x = element_text(size = 12), axis.text.y = element_text(face = "bold", size = 8), strip.text.x = element_text(face = "bold", size = 12)) + 
+labs(title = "Linear discriminant analysis (LDA)\nEffect Size Analysis", x = "Taxon", y = "LDA")
 
 groupN = res1 %>% group_by(Group) %>% summarise(count = length(unique(taxon)))
 gt = ggplotGrob(plot_lefse)
