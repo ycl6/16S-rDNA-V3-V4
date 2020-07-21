@@ -9,7 +9,8 @@
 # $ conda activate picrust2
 #
 # Requires fasta file "expr.asv.fasta" and biom file "expr.biom" generated during phyloseq analysis
-# Update the number of CPUs to run picrust2 in parallel with the "--processes" option
+# The `--output` argument to specify the output folder for final files
+# The `--processes N` argument to specify the number of CPUs to run picrust2 in parallel
 # $ picrust2_pipeline.py --study_fasta expr.asv.fasta --input expr.biom --output picrust2_out_stratified --processes 2 --stratified --remove_intermediate --verbose
 #
 # Deactivate the environment if required
@@ -35,8 +36,12 @@ options(width=190)
 # Load saved workspace
 # load("image3.RData")
 
-# Note to change the PATH to the "picrust2" output folder and picrust2 mapfiles accordingly
+# Note to change the PATH to the "picrust2" output folder accordingly
+# Full path is not necessary if `R` is executed in the directory one-level above "picrust2_out_stratified"
 picrust2 = "picrust2_out_stratified"
+
+# Note to change the PATH to the picrust2 mapfiles accordingly
+# Use the "description_mapfiles" PATH you located with the `locate` command above
 mapfile = "/home/user/miniconda3/envs/picrust2/lib/python3.6/site-packages/picrust2/default_files/description_mapfiles"
 
 # Set picrust2 output file paths
@@ -74,7 +79,7 @@ p2PW = as.matrix(p2PW[,-1])
 p2PW = round(p2PW)
 
 # Perform compositional data analysis (CoDA)
-# Allow comparison between 2 groups
+# Allow statistical analysis between 2 groups/conditions
 # The default "mc.samples" option is 128
 set.seed(12345)
 aldex2_EC = aldex(p2EC, sample_data(ps1)$Group, mc.samples = 500, test = "t", effect = TRUE, denom = "iqlr", verbose = TRUE)
