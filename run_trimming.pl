@@ -56,43 +56,46 @@ if($pyv =~ /Python 3/) {
 	die "Command 'python' not found\n";
 }
 
-foreach my $f (glob("$fastq/*1.f*q.gz")) {
+# Create folders
+if(! -d "$trimmed") {
+	print "mkdir $trimmed\n";
+	mkdir "$trimmed";
+}
+
+if(! -d "$tmp") {
+	print "mkdir $tmp\n";
+	mkdir "$tmp";
+}
+
+# Run cutadapt
+foreach my $f (glob("$fastq/*.gz")) {
 	my $file = basename($f);
 	my $dir = dirname($f);
 	my $id = "";
 	my $fq1 = "$dir/$file";
 	my $fq2 = "";
 
-	# Accepts "_R1_001.fastq.gz" or "_1.fastq.gz"
+	# Accepts "_R1_001.fastq.gz" / "_1.fastq.gz" / "_1.fq.gz"
 	if($file =~ /^(\S+)_R1_001\.fastq\.gz/) {	# _R1_001.fastq.gz
 		$id = $1;
 		$fq2 = "$dir/$id\_R2_001.fastq.gz";
 	} elsif($file =~ /^(\S+)_1\.fastq\.gz/) {	# _1.fastq.gz
 		$id = $1;
 		$fq2 = "$dir/$id\_2.fastq.gz";
+	} elsif($file =~ /^(\S+)_1\.fq\.gz/) {		# _1.fq.gz
+		$id = $1;
+		$fq2 = "$dir/$id\_2.fq.gz";
 	} else {
-		die "Invalid file pattern: $file\n";
+		next;	# skip all other files
 	}
 	
-	my $trim1 = "$trimmed/$id\_1.fastq.gz";
-	my $trim2 = "$trimmed/$id\_2.fastq.gz";
-	my $log = "$trimmed/$id.log";
-	my $opt = "";
-	my $cmd = "";
+	my $trim1 = "$trimmed/$id\_1.fastq.gz";	# trimmed R1
+	my $trim2 = "$trimmed/$id\_2.fastq.gz";	# trimmed R2
+	my $log = "$trimmed/$id.log";		# cutadapt log file
 
-	if(! -d "$trimmed") {
-		print "mkdir $trimmed\n";
-		mkdir "$trimmed";
-	}
-
-	if(! -d "$tmp") {
-		print "mkdir $tmp\n";
-		mkdir "$tmp";
-	}
 	print "Running cutadapt on Sample \"$id\"\n";
-
-	$opt = "-g $primerF -a $primerRrev -G $primerR -A $primerFrev -n 2 --match-read-wildcards --length 300 --minimum-length 150 --overlap 10 $pyj";
-	$cmd = "cutadapt $opt -o $trim1 -p $trim2 $fq1 $fq2 > $log";
+	my $opt = "-g $primerF -a $primerRrev -G $primerR -A $primerFrev -n 2 --match-read-wildcards --length 300 --minimum-length 150 --overlap 10 $pyj";
+	my $cmd = "cutadapt $opt -o $trim1 -p $trim2 $fq1 $fq2 > $log";
 	print "$cmd\n";
 	system($cmd);
 }
