@@ -10,7 +10,7 @@ Aiming to explore the temporal stability of gut microbiota in Parkinson's diseas
 
 * Paper: https://doi.org/10.1016/j.ebiom.2019.05.064
 * EBI ENA: https://www.ebi.ac.uk/ena/data/view/PRJEB27564
-* First added to this GitHub on Jul 2020
+* First added to GitHub on Jul 2020 [Link to Demo](https://ycl6.github.io/16S-Demo/)
 
 ## Study: ERP004961 (PRJEB5542)
 
@@ -22,4 +22,4 @@ We examined the bacterial flora associated with 20 cultured strains of *Ectocarp
 
 * Paper: https://doi.org/10.1038/ismej.2015.104
 * EBI ENA: https://www.ebi.ac.uk/ena/data/view/PRJEB5542
-* First added to this GitHub on Jun 2019
+* First added to GitHub on Jun 2019
