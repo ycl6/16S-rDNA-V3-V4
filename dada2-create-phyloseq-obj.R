@@ -43,8 +43,8 @@ sum(seqtab.nochim)/sum(seqtab)
 # Assign taxonomy
 # Note to change the PATH to reference training datasets accordingly
 dbpath = "/path-to-db/"
-ref1 = paste0(dbpath, "silva_nr_v138_train_set.fa.gz")
-ref2 = paste0(dbpath, "silva_species_assignment_v138.fa.gz")
+ref1 = paste0(dbpath, "silva_nr99_v138.1_train_set.fa.gz")
+ref2 = paste0(dbpath, "silva_species_assignment_v138.1.fa.gz")
 ref3 = paste0(dbpath, "16SMicrobial.fa.gz")
 
 # Classifies sequences against SILVA reference training dataset
@@ -121,8 +121,8 @@ phangorn::write.phyDat(phang.align, file = "alignment.aln", format = "phylip")
 # Phylogenetic tree construction
 # Use system2() to execute commands in R
 # Note to change the PATH to raxml and raxmlng accordingly
-raxml = "/path-to-script/raxmlHPC-PTHREADS-SSE3"
-raxmlng = "/path-to-script/raxml-ng"
+raxml = "/path-to-raxml-binary"	# e.g. /usr/local/bin/raxmlHPC-PTHREADS-SSE3
+raxmlng = "/path-to-raxml-ng-binary"	# e.g. /usr/local/bin/raxml-ng
 
 system2(raxml, args = c("-T 2", "-f E", "-p 1234", "-x 5678", "-m GTRCAT", "-N 1", "-s alignment.aln", "-n raxml_tree_GTRCAT"))
 system2(raxmlng, args = c("--evaluate", "--force", "--seed 1234", "--log progress", "--threads 2", "--msa alignment.fasta", "--model GTR+G", "--tree RAxML_fastTree.raxml_tree_GTRCAT", "--brlen scaled", "--prefix GTRCAT"))
