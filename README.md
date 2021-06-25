@@ -126,10 +126,13 @@ conda deactivate
 
 ## Download Silva and NCBI taxonomy DB
 
-1. Silva taxonomic training data formatted for DADA2 (Silva version 138)
-https://zenodo.org/record/3731176#.XvdOiihKhaQ
-* silva_nr_v138_train_set.fa.gz
-* silva_species_assignment_v138.fa.gz
+1. Silva taxonomic training data formatted for DADA2 (Silva version 138.1)
+https://zenodo.org/record/4587955#.YNWax3VKhkY
+
+> Note: These files are intended for use in classifying prokaryotic 16S sequencing data and are not appropriate for classifying eukaryotic ASVs.
+
+* silva_nr99_v138.1_train_set.fa.gz
+* silva_species_assignment_v138.1.fa.gz
 
 2. Create from NCBI 16SMicrobial blast DB
 
