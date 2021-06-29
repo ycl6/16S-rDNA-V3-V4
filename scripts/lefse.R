@@ -1,17 +1,27 @@
 # By I-Hsuan Lin
 # Return lefse objects
 
-lefse_1name_obj <- function(ps, group) {
+# Use subject = TRUE to include subject in output
+lefse_1name_obj <- function(ps, group, subject = FALSE) {
 	tax = as.data.frame(rbind(c("class",as.vector(group))), stringsAsFactors = FALSE)
 	colnames(tax) = c("name", sample_names(ps))
-	tax = rbind(tax, c("subject", sample_names(ps)))
+
+	if(subject) {
+		tax = rbind(tax, c("subject", sample_names(ps)))
+	}
+
 	return(tax)
 }
 
-lefse_2name_obj <- function(ps, group, subgroup) {
+# Use subject = TRUE to include subject in output
+lefse_2name_obj <- function(ps, group, subgroup, subject = FALSE) {
 	tax = as.data.frame(rbind(c("class",as.vector(group)), c("subclass", as.vector(subgroup))), stringsAsFactors = FALSE)
 	colnames(tax) = c("name", sample_names(ps))
-	tax = rbind(tax, c("subject", sample_names(ps)))
+
+	if(subject) {
+		tax = rbind(tax, c("subject", sample_names(ps)))
+	}
+
 	return(tax)
 }
 
