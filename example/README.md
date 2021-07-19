@@ -12,7 +12,7 @@ Aiming to explore the temporal stability of gut microbiota in Parkinson's diseas
 * EBI ENA: https://www.ebi.ac.uk/ena/data/view/PRJEB27564
 * First added to GitHub on Jul 2020 [Link to Demo](https://ycl6.github.io/16S-Demo/)
 
-## Study: ERP004961 (PRJEB5542)
+## Study: ERP004961 (PRJEB5542) *pending update*
 
 ### 16S metabarcoding of bacteria associated with cultured strains of the brown alga *Ectocarpus sp.*
 
