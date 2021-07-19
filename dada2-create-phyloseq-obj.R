@@ -2,6 +2,8 @@
 
 library("dada2")
 library("data.table")
+library("DECIPHER")
+library("phangorn")
 library("phyloseq")
 library("ggplot2")
 options(width=190)
@@ -47,12 +49,16 @@ ref1 = paste0(dbpath, "silva_nr99_v138.1_train_set.fa.gz")
 ref2 = paste0(dbpath, "silva_species_assignment_v138.1.fa.gz")
 ref3 = paste0(dbpath, "16SMicrobial.fa.gz")
 
+# Extracts the sequences
+seqs = getSequences(seqtab.nochim)
+
 # Classifies sequences against SILVA reference training dataset
-taxtab = assignTaxonomy(st.nochim, refFasta = ref1, minBoot = 80, tryRC = TRUE, outputBootstraps = TRUE, verbose = TRUE, multithread = TRUE)
+set.seed(12345)
+taxtab = assignTaxonomy(seqs, refFasta = ref1, minBoot = 80, tryRC = TRUE, outputBootstraps = TRUE, verbose = TRUE, multithread = TRUE)
 
 # Taxonomic assignment to the species level by exact matching against SILVA and NCBI reference datasets
-spec_silva = assignSpecies(getSequences(st.nochim), ref2, allowMultiple = FALSE, tryRC = TRUE, verbose = TRUE)
-spec_ncbi = assignSpecies(getSequences(st.nochim), ref3, allowMultiple = FALSE, tryRC = TRUE, verbose = TRUE)
+spec_silva = assignSpecies(seqs, ref2, allowMultiple = FALSE, tryRC = TRUE, verbose = TRUE)
+spec_ncbi = assignSpecies(seqs, ref3, allowMultiple = FALSE, tryRC = TRUE, verbose = TRUE)
 
 # Combine species-level taxonomic assignment from 2 reference sources
 SVformat = paste("%0",nchar(as.character(ncol(st.nochim))),"d", sep = "")
@@ -103,7 +109,7 @@ taxtab$tax[!gen.match,"Species"] = NA
 print(paste("Of which", sum(!is.na(taxtab$tax[,"Species"])), "had genera consistent with the input table."))
 
 # Prepare df
-df = data.frame(sequence = colnames(st.nochim), abundance = colSums(st.nochim), stringsAsFactors = FALSE)
+df = data.frame(sequence = seqs, abundance = colSums(seqtab.nochim), stringsAsFactors = FALSE)
 df$id = svid
 
 df = merge(df, as.data.frame(taxtab), by = "row.names")
@@ -111,12 +117,12 @@ rownames(df) = df$id
 df = df[order(df$id),2:ncol(df)]
 
 # Construct phylogenetic tree
-alignment = DECIPHER::AlignSeqs(Biostrings::DNAStringSet(setNames(df$sequence, df$id)), anchor = NA)
+alignment = AlignSeqs(Biostrings::DNAStringSet(setNames(df$sequence, df$id)), anchor = NA)
 
 # Export alignment
-phang.align = phangorn::phyDat(as(alignment, "matrix"), type = "DNA")
-phangorn::write.phyDat(phang.align, file = "alignment.fasta", format = "fasta")
-phangorn::write.phyDat(phang.align, file = "alignment.aln", format = "phylip")
+phang.align = phyDat(as(alignment, "matrix"), type = "DNA")
+write.phyDat(phang.align, file = "alignment.fasta", format = "fasta")
+write.phyDat(phang.align, file = "alignment.aln", format = "phylip")
 
 # Phylogenetic tree construction
 # Use system2() to execute commands in R

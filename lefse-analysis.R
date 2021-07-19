@@ -3,8 +3,8 @@
 library("data.table")
 library("phyloseq")
 library("ggplot2")
-library("dplyr")
 library("grid")
+library("tidyverse")
 Sys.setlocale("LC_COLLATE","C")
 options(width=190)
 
@@ -20,9 +20,13 @@ source("/path-to-script/lefse.R", local = TRUE)
 if(!dir.exists("lefse")) { dir.create("lefse") }
 
 # Prepare input data
+# Add 'subject = TRUE' to include subject in the data.frame
 tax1 = lefse_1name_obj(ps1, sample_data(ps1)$Group)
 lefse1 = lefse_obj(ps1)
 lefse1 = rbind(tax1, lefse1)
+
+# Replace unsupported chars with underscore
+lefse1$name = gsub(" ","_",lefse1$name)
 lefse1$name = gsub("-","_",lefse1$name)
 lefse1$name = gsub("/","_",lefse1$name)
 
@@ -32,15 +36,19 @@ lefse1 = fix_taxa_silva132(lefse1)
 # Output the prepared LEfSe input to file
 write.table(lefse1, file="lefse/expr1.lefse_table.txt", sep = "\t", quote = F, row.names = F, col.names = F)
 
-# Set the full-path to the "nsegata-lefse" folder
-nsegata_lefse = "/path-to-script/nsegata-lefse-9adc3a62460e/"
+# Set the full-paths to LEfSe’s python scripts if they are not in PATH
+lefse-format_input = "/path-to-lefse-format_input.py"	# e.g. /home/ngs/lefse/lefse-format_input.py
+run_lefse = "/path-to-run_lefse.py"			# e.g. /home/ngs/lefse/run_lefse.py
 
 # Run LEfSe
-system2(paste0(nsegata_lefse, "format_input.py"), 
-	args = c("lefse/expr1.lefse_table.txt", "lefse/expr1.lefse_table.in", "-c 1", "-u 2", "-o 1000000"))
-# set KW alpha to 1 to allow returning of all P-value to perform adjustment later
-system2(paste0(nsegata_lefse, "run_lefse.py"), 
-	args = c("lefse/expr1.lefse_table.in", "lefse/expr1.lefse_table.res", "-b 100", "-a 1", "-l 2"))
+
+system2(lefse_format_input,
+	args = c("lefse/expr1.lefse_table.txt", "lefse/expr1.lefse_table.in", "-c 1", "-o 1000000"))
+
+
+# set Kruskal-Wallis alpha (-a) to 1 to allow returning of all P-value to perform adjustment later
+system2(run_lefse,
+	args = c("lefse/expr1.lefse_table.in", "lefse/expr1.lefse_table.res", "-b 100", "-a 1", "-l 1"), stdout = TRUE)
 
 # Perform multiple testing correction on KW P-values
 q = 0.1	# fdr threshold at 0.1
@@ -54,34 +62,46 @@ table(expr1$V3 != "")
 # Write new result file with the P-value column replaced by the FDR
 write.table(expr1[,c(1:4,6)], file = "lefse/expr1.lefse_table.res.padj", sep = "\t", quote = F, row.names = F, col.names = F)
 
-# Set the full-paths to `export2graphlan`, `GraPhlAn` and `lefse.pl` if they are not in PATH
-export2graphlan = "/path-to-script/export2graphlan.py"
-graphlan_annotat = "/path-to-script/graphlan_annotate.py"
-graphlan = "/path-to-script/graphlan.py"
-graphlan_parser = "/path-to-script/lefse.pl"
-
 # Plot cladogram
-# Update the coloring file "lefse/expr1.colors" if necessary. The colors should be defined in HSV (hue, saturation, value) scale
-system2(export2graphlan,
-        args = c("-i lefse/expr1.lefse_table.txt", "-o lefse/expr1.lefse_table.res.padj",
-                 "-t lefse/expr1.graphlan_tree.txt", "-a lefse/expr1.graphlan_annot.txt",
-                 "--external_annotations 2,3,4,5,6", "--fname_row 0", "--skip_rows 1",
-                 "--biomarkers2colors lefse/expr1.colors"))
 
-system2(graphlan_annotat,
-        args = c("--annot lefse/expr1.graphlan_annot.txt",
-                 "lefse/expr1.graphlan_tree.txt",
-                 "lefse/expr1.graphlan_outtree.txt"))
+#######################################################
+# Run below commands outside R in Linux environment
+# Both export2graphlan & graphlan require Python 2.7
+# If you have export2graphlan & graphlan installed on a conda environment, activate the required environment, e.g.
+# $ conda activate graphlan
+#
+# Requires "lefse/expr1.lefse_table.txt" and "lefse/expr1.lefse_table.res.padj" generated above
+# Requries "lefse/expr1.colors" with color setting
+# Run export2graphlan & graphlan with full-paths if they are not in PATH
+#
+#----- START: Run in terminal/console -----#
+# Run export2graphlan
+/path-to-export2graphlan.py -i lefse/expr1.lefse_table.txt -o lefse/expr1.lefse_table.res.padj \
+        -t lefse/expr1.graphlan_tree.txt -a lefse/expr1.graphlan_annot.txt --external_annotations 2,3,4,5,6 \
+        --fname_row 0 --biomarkers2colors lefse/expr1.colors
 
-system2(graphlan,
-        args = c("--dpi 150", "lefse/expr1.graphlan_outtree.txt", "lefse/expr1.graphlan.png",
-                 "--external_legends", "--size 8", "--pad 0.2"))
+# Run graphlan
+/path-to-graphlan_annotate.py --annot lefse/expr1.graphlan_annot.txt lefse/expr1.graphlan_tree.txt \
+	lefse/expr1.graphlan_outtree.txt
+
+# Convert 'lsqb' and 'rsqb' back to square bracket symbols
+sed 's/lsqb/[/' lefse/expr1.graphlan_outtree.txt | sed 's/rsqb/]/' > lefse/expr1.graphlan_outtree_sqb.txt
+sed 's/lsqb/[/' lefse/expr1.lefse_table.res.padj | sed 's/rsqb/]/' > lefse/expr1.lefse_table.res_sqb.padj
+
+# Create cladogram
+/path-to-graphlan.py --dpi 150 lefse/expr1.graphlan_outtree_sqb.txt lefse/expr1.graphlan.png \
+	--external_legends --size 8 --pad 0.2
 
 # Convert to readble output
-system2("perl", args = c(graphlan_parser, "lefse/expr1.lefse_table.res.padj",
-                         "lefse/expr1.graphlan_outtree.txt", "lefse/expr1.out"))
+perl /path-to-lefse.pl lefse/expr1.lefse_table.res_sqb.padj lefse/expr1.graphlan_outtree_sqb.txt lefse/expr1.out
+#----- END: Run in terminal/console -----#
+#
+# Deactivate the environment if required
+# $ conda deactivate
+#######################################################
 
 # Plot results
+
 res1 = data.frame(fread("lefse/expr1.out"))
 res1 = res1[order(res1$order),]
 names(res1)[c(5:7)] = c("Group","LDA","FDR")
@@ -92,17 +112,13 @@ res1$Group = as.factor(res1$Group)
 levels(res1$taxon) = gsub("Escherichia_Shigella","Escherichia/Shigella",levels(res1$taxon))
 levels(res1$taxon) = gsub("_UCG_","_UCG-",levels(res1$taxon))
 
-plot_lefse = ggplot(res1, aes(taxon, LDA, fill = Group)) + geom_bar(stat = "identity", width = 0.7, size = 0.5) + coord_flip() + theme_bw() +
-facet_wrap(~ Group, ncol = 1, scales = "free_y") + theme(legend.position = "right", 
-axis.text.x = element_text(size = 12), axis.text.y = element_text(face = "bold", size = 8), strip.text.x = element_text(face = "bold", size = 12)) + 
-labs(title = "Linear discriminant analysis (LDA)\nEffect Size Analysis", x = "Taxon", y = "LDA")
-
-groupN = res1 %>% group_by(Group) %>% summarise(count = length(unique(taxon)))
-gt = ggplotGrob(plot_lefse)
-panelI.1 = gt$layout$t[grepl("panel", gt$layout$name)]
-gt$heights[panelI.1] = unit(groupN$count, "null")
-dev.off()
-
 png("lefse/expr1.lefse_table.png", width = 8, height = 8, units = "in", res = 300)
-grid.draw(gt)
+ggplot(res1, aes(taxon, LDA, fill = Group)) + geom_bar(stat = "identity", width = 0.7, size = 0.5) +
+	coord_flip() + theme_bw() + facet_grid(rows = vars(Group), scales = "free_y", space = "free_y") +
+	scale_fill_manual(values = c("control" = "blue", "patient" = "red")) +
+	theme(legend.position = "none",
+	      axis.text.y = element_text(face = "bold", size = 8),
+	      strip.placement = "outside",
+	      strip.text.y = element_text(face = "bold", angle = 0)) +
+	labs(title = "Linear discriminant analysis (LDA)\nEffect Size Analysis", x = "Taxon", y = "LDA")
 dev.off()

@@ -3,32 +3,36 @@
 # Run picrust2
 
 #######################################################	
-# Run below commands outside R in Linux environment	
-# picrust2 requires Python 3
+# Run below commands outside R in Linux environment
 # If you have picrust2 installed on a conda environment, activate the required environment, e.g.
 # $ conda activate picrust2
 #
 # Requires fasta file "expr.asv.fasta" and biom file "expr.biom" generated during phyloseq analysis
 # The `--output` argument to specify the output folder for final files
 # The `--processes N` argument to specify the number of CPUs to run picrust2 in parallel
-# $ picrust2_pipeline.py --study_fasta expr.asv.fasta --input expr.biom --output picrust2_out_stratified --processes 2 --stratified --remove_intermediate --verbose
 #
-# Deactivate the environment if required
-# $ conda deactivate
-#
+#----- START: Run in terminal/console -----#
+# Run picrust2_pipeline.py
+/path-to-picrust2_pipeline.py --study_fasta expr.asv.fasta --input expr.biom \
+	--output picrust2_out_stratified --processes 2 --stratified --remove_intermediate --verbose
+
 # Locate and take note the directory that keeps the picrust2 mapfiles
-# $ locate description_mapfiles
+locate description_mapfiles
+#----- END: Run in terminal/console -----#
+#
 # Example location:
 # /home/user/miniconda3/envs/picrust2/lib/python3.6/site-packages/picrust2/default_files/description_mapfiles
 # /home/user/miniconda3/envs/picrust2/lib/python3.6/site-packages/picrust2/default_files/description_mapfiles/KEGG_modules_info.tsv.gz
 # /home/user/miniconda3/envs/picrust2/lib/python3.6/site-packages/picrust2/default_files/description_mapfiles/KEGG_pathways_info.tsv.gz
 # ...
+# Deactivate the environment if required
+# $ conda deactivate
 #######################################################	
 
 library("data.table")	# Also requires R.utils to read gz and bz2 files
 library("phyloseq")
 library("ALDEx2")
-library("dplyr")
+library("tidyverse")
 options(width=190)
 
 # Continued from phyloseq workflow (phyloseq-analysis.R)
@@ -95,31 +99,39 @@ head(aldex2_PW)
 
 # Check estimated effect size range
 # ALDEx2 authors suggest that an effect size of 1 or greater can be used as significance cutoff
-quantile(aldex2_EC$effect, seq(0, 1, 0.1))
-quantile(aldex2_KO$effect, seq(0, 1, 0.1))
-quantile(aldex2_PW$effect, seq(0, 1, 0.1))
+png("images/ALDEx2_picrust2_effect.png", width = 6, height = 6, units = "in", res = 300)
+par(mfrow = c(2,2))
+hist(aldex2_EC$effect, breaks = 20, xlab = "effect size", col = "yellow", main = "EC")
+hist(aldex2_KO$effect, breaks = 20, xlab = "effect size", col = "yellow", main = "KO")
+hist(aldex2_PW$effect, breaks = 20, xlab = "effect size", col = "yellow", main = "Pathway")
+dev.off()
 
 # Create MW (fold-change to variance/effect) and MA (Bland-Altman) plots
 # The "test" option can be "welch" or "wilcox"
 png("ALDEx2_picrust2_MW_MA.png", width = 6, height = 8, units = "in", res = 300)
-par(mfrow=c(3,2))
+par(mfrow = c(3,2))
 aldex.plot(aldex2_EC, type = "MW", test = "wilcox", all.cex = 0.4, rare.cex = 0.4, called.cex = 0.6, cutoff = 0.05, xlab = "Dispersion", ylab = "Difference")
 title(main = "(EC) MW Plot")
+
 aldex.plot(aldex2_EC, type = "MA", test = "wilcox", all.cex = 0.4, rare.cex = 0.4, called.cex = 0.6, cutoff = 0.05, xlab = "Log-ratio abundance", ylab = "Difference")
 title(main = "(EC) MA Plot")
+
 aldex.plot(aldex2_KO, type = "MW", test = "wilcox", all.cex = 0.4, rare.cex = 0.4, called.cex = 0.6, cutoff = 0.05, xlab = "Dispersion", ylab = "Difference")
 title(main = "(KO) MW Plot")
+
 aldex.plot(aldex2_KO, type = "MA", test = "wilcox", all.cex = 0.4, rare.cex = 0.4, called.cex = 0.6, cutoff = 0.05, xlab = "Relative abundance", ylab = "Difference")
 title(main = "(KO) MA Plot")
+
 aldex.plot(aldex2_PW, type = "MW", test = "wilcox", all.cex = 0.4, rare.cex = 0.4, called.cex = 0.6, cutoff = 0.05, xlab = "Dispersion", ylab = "Difference")
 title(main = "(PW) MW Plot")
+
 aldex.plot(aldex2_PW, type = "MA", test = "wilcox", all.cex = 0.4, rare.cex = 0.4, called.cex = 0.6, cutoff = 0.05, xlab = "Relative abundance", ylab = "Difference")
 title(main = "(PW) MA Plot")
 dev.off()
 
 # Observe relationship between effect, difference, and P values
 png("ALDEx2_picrust2_P_adjP.png", width = 6, height = 8, units = "in", res = 300)
-par(mfrow=c(3,2))
+par(mfrow = c(3,2))
 plot(aldex2_EC$effect, aldex2_EC$we.ep, log = "y", cex = 0.4, col = "blue", pch = 19, xlab = "Effect size", ylab = "P value", main = "(EC) Effect size plot")
 points(aldex2_EC$effect, aldex2_EC$we.eBH, cex = 0.5, col = "red", pch = 19)
 abline(h = 0.05, lty = 2, col = "grey")

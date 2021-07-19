@@ -2,7 +2,7 @@
 
 library("dada2")
 library("ggplot2")
-options(width = 190)
+options(width=190)
 
 # Set path
 trimmed = "trimmed"	# cutadapt trimmed fastq files
@@ -28,7 +28,7 @@ filtFs = file.path(filt, basename(fnFs))
 filtRs = file.path(filt, basename(fnRs))
 
 # Perform filtering and trimming
-# Review "plotQualityProfile.pdf" to select the best paramters for truncLen
+# Review "plotQualityProfile.pdf" to select the best paramters for 'truncLen'
 out = filterAndTrim(fnFs, filtFs, fnRs, filtRs, 
 	# Need to keep paramters consistent between runs of the same study
 	truncLen = c(260,200), minLen = 200, maxN = 0, truncQ = 2, maxEE = c(2,5),
@@ -60,6 +60,7 @@ mergers = mergePairs(dadaFs, filtFs, dadaRs, filtRs, verbose = TRUE)
 # Construct sequence table
 seqtab = makeSequenceTable(mergers)
 
+# View the length frequency distribution
 table(nchar(getSequences(seqtab)))
 
 # Save sequence table
